@@ -1,77 +1,376 @@
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<meta name="theme-color" content="#071421">
-<title>criptooTRXbot · Mini App</title>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<!-- IMPORTANTE: pega aquí el script SDK completo que Monetag genera para tu Mini App.
-     No se puede adivinar la URL del SDK solo con el ID de zona. -->
-<!-- <script src="URL_SDK_MONETAG" data-zone="12299648" data-sdk="show_12299648"></script> -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#07111f">
+<title>criptooTRXbot | TRX Rewards</title>
+
 <style>
-:root{color-scheme:dark;--bg:#071421;--panel:#102638;--panel2:#15334a;--cyan:#4ce0ef;--blue:#4c8cff;--text:#eaf6ff;--muted:#9db8ca;--gold:#ffcf66;--green:#6ef0a4}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 80% 0,#12334b 0,transparent 35%),var(--bg);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:var(--text);padding:16px 14px 30px}
-.wrap{max-width:520px;margin:auto}.top{display:flex;justify-content:space-between;align-items:center;margin:5px 0 16px}.brand{font-size:18px;font-weight:800;letter-spacing:.3px}.pill{border:1px solid #31516a;background:#102638;border-radius:99px;padding:6px 10px;color:var(--muted);font-size:12px}
-.hero{border:1px solid #21445b;border-radius:22px;padding:20px;background:linear-gradient(140deg,#14364d,#0c2232);box-shadow:0 12px 35px #0003}.eyebrow{font-size:12px;color:var(--cyan);letter-spacing:1.4px;font-weight:700}.balance{font-size:29px;font-weight:900;margin:8px 0 2px;word-break:break-word}.balance small{font-size:13px;color:var(--muted);font-weight:600}.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:17px}.stat{background:#081b2a8c;border:1px solid #21445b;border-radius:13px;padding:12px}.stat span{font-size:11px;color:var(--muted);display:block}.stat strong{font-size:17px;display:block;margin-top:3px}.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}.btn{border:0;border-radius:14px;padding:15px 12px;font-size:14px;font-weight:800;color:#061522;background:linear-gradient(135deg,var(--cyan),#71bfff);cursor:pointer;min-height:52px}.btn.secondary{background:#15334a;color:var(--text);border:1px solid #2a506d}.btn.vip{background:linear-gradient(135deg,#ffd66d,#f7a938);color:#271b05}.btn.full{grid-column:1/-1}.section{margin-top:16px;background:var(--panel);border:1px solid #203e55;border-radius:18px;padding:16px}.section h2{font-size:15px;margin:0 0 10px}.section p{font-size:13px;color:var(--muted);line-height:1.5;margin:5px 0}.plans{display:grid;grid-template-columns:1fr 1fr;gap:10px}.plan{background:var(--panel2);border:1px solid #2b506b;border-radius:14px;padding:13px}.plan h3{font-size:14px;margin:0 0 5px}.plan .price{font-size:20px;font-weight:900;color:var(--gold);margin:7px 0}.plan ul{font-size:12px;color:var(--muted);padding-left:17px;margin:8px 0 12px;line-height:1.6}.plan button{width:100%;padding:11px 5px;font-size:12px}.status{min-height:20px;color:var(--green);font-size:12px;margin-top:8px}.foot{text-align:center;color:#66869c;font-size:11px;margin:16px 0 0}.adbox{border:1px dashed #31516a;border-radius:12px;padding:14px;text-align:center;color:#86a7bd;font-size:12px}
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: #07111f;
+    color: #f1f5f9;
+    font-family: Arial, Helvetica, sans-serif;
+    min-height: 100vh;
+}
+
+.container {
+    width: 100%;
+    max-width: 480px;
+    margin: auto;
+    padding: 20px 16px 35px;
+}
+
+.header {
+    text-align: center;
+    padding: 24px 10px;
+}
+
+.logo {
+    width: 82px;
+    height: 82px;
+    margin: auto;
+    border-radius: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #00d2ff, #0066ff);
+    box-shadow: 0 0 30px rgba(0, 150, 255, 0.2);
+    font-size: 38px;
+}
+
+.header h1 {
+    margin-top: 17px;
+    font-size: 27px;
+    font-weight: 900;
+}
+
+.header h1 span {
+    color: #00d2ff;
+}
+
+.subtitle {
+    margin-top: 8px;
+    color: #94a3b8;
+    font-size: 13px;
+}
+
+.card {
+    background: #101e30;
+    border: 1px solid #20334b;
+    border-radius: 18px;
+    padding: 20px;
+    margin-bottom: 15px;
+}
+
+.balance-card {
+    background: linear-gradient(145deg, #102b46, #102033);
+    border: 1px solid #15537b;
+    text-align: center;
+    padding: 25px 15px;
+}
+
+.label {
+    font-size: 12px;
+    color: #91a8bf;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+}
+
+.balance {
+    font-size: 34px;
+    font-weight: 900;
+    color: #00d2ff;
+    margin: 12px 0 5px;
+}
+
+.balance small {
+    font-size: 16px;
+}
+
+.note {
+    color: #94a3b8;
+    font-size: 12px;
+    margin-top: 10px;
+}
+
+.section-title {
+    font-size: 17px;
+    font-weight: 800;
+    margin-bottom: 16px;
+}
+
+.button {
+    width: 100%;
+    border: none;
+    border-radius: 13px;
+    padding: 15px;
+    margin-top: 10px;
+    font-size: 15px;
+    font-weight: 800;
+    text-decoration: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.button-primary {
+    background: linear-gradient(90deg, #00bfff, #087cff);
+    color: white;
+}
+
+.button-telegram {
+    background: #229ed9;
+    color: white;
+}
+
+.button-ad {
+    background: #172c43;
+    border: 1px solid #294766;
+    color: #d8eaff;
+}
+
+.button-vip {
+    background: linear-gradient(90deg, #a56a13, #e8b83f);
+    color: #17120a;
+}
+
+.info-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 13px 0;
+}
+
+.info-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: #172c43;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.info-text strong {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.info-text span {
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+.reward {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #20334b;
+    font-size: 13px;
+}
+
+.reward:last-child {
+    border-bottom: none;
+}
+
+.reward-value {
+    color: #00d2ff;
+    font-weight: bold;
+}
+
+.vip-box {
+    border-color: #8a641f;
+    background: linear-gradient(145deg, #2a2314, #171e29);
+}
+
+.vip-box .section-title {
+    color: #f4c452;
+}
+
+.footer {
+    text-align: center;
+    padding: 20px 5px;
+    color: #62758b;
+    font-size: 11px;
+    line-height: 1.7;
+}
+
+.footer a {
+    color: #00bfff;
+    text-decoration: none;
+}
+
+hr {
+    border: 0;
+    border-top: 1px solid #20334b;
+    margin: 15px 0;
+}
 </style>
 </head>
+
 <body>
-<div class="wrap">
-  <div class="top"><div class="brand">⚡ criptooTRXbot</div><div class="pill" id="tgBadge">Telegram Mini App</div></div>
-  <section class="hero">
-    <div class="eyebrow">PANEL DE MINADO</div>
-    <div class="balance" id="balance">Consulta tu saldo en el bot <small>TRX</small></div>
-    <div class="stats"><div class="stat"><span>MINADO NORMAL</span><strong>+0.000002 TRX</strong></div><div class="stat"><span>ESPERA NORMAL</span><strong>3 segundos</strong></div></div>
-  </section>
-  <div class="actions">
-    <button class="btn" onclick="sendAction('mine')">⛏️ MINAR</button>
-    <button class="btn secondary" onclick="sendAction('daily')">🎁 BONUS DIARIO</button>
-    <button class="btn secondary full" onclick="watchRewarded()">📺 VER ANUNCIO Y RECOMPENSA</button>
-    <button class="btn secondary" onclick="watchPopup()">🪟 ANUNCIO POPUP</button>
-    <button class="btn secondary" onclick="sendAction('balance')">💰 ACTUALIZAR SALDO</button>
-  </div>
-  <section class="section">
-    <h2>⭐ Mejora VIP</h2><p>Pagos seguros dentro de Telegram mediante Stars. El bot activa VIP tras confirmar el pago.</p>
-    <div class="plans">
-      <div class="plan"><h3>VIP 7 días</h3><div class="price">50 ⭐</div><ul><li>Minado x5</li><li>1 segundo entre minados</li><li>400 minados al día</li></ul><button class="btn vip" onclick="sendAction('vip7')">Comprar 7 días</button></div>
-      <div class="plan"><h3>VIP 30 días</h3><div class="price">150 ⭐</div><ul><li>Minado x5</li><li>1 segundo entre minados</li><li>400 minados al día</li></ul><button class="btn vip" onclick="sendAction('vip30')">Comprar 30 días</button></div>
-    </div>
-  </section>
-  <section class="section"><h2>📢 Publicidad</h2><div class="adbox" id="adStatus">Los anuncios se habilitan cuando se añade el SDK exacto de Monetag al archivo HTML.</div><p>Los anuncios rewarded entregan la recompensa solo si el SDK devuelve evento monetizado. El popup no da recompensa por sí mismo.</p></section>
-  <div class="status" id="status"></div>
-  <div class="foot">criptooTRXbot · Mini App</div>
+
+<div class="container">
+
+    <header class="header">
+        <div class="logo">⚡</div>
+        <h1>criptoo<span>TRX</span>bot</h1>
+        <p class="subtitle">TRON rewards · Mining · Crypto</p>
+    </header>
+
+    <section class="card balance-card">
+        <div class="label">Sistema de recompensas TRX</div>
+        <div class="balance">TRX <small>⚡</small></div>
+        <p class="note">
+            Gestiona tus recompensas directamente desde nuestro bot de Telegram.
+        </p>
+    </section>
+
+    <section class="card">
+        <h2 class="section-title">🚀 Accede a tu cuenta</h2>
+
+        <a class="button button-telegram"
+           href="https://t.me/criptooTRXbot"
+           target="_blank">
+            🤖 ABRIR BOT DE TELEGRAM
+        </a>
+
+        <a class="button button-ad"
+           href="https://uplcm.com/4/12182862"
+           target="_blank">
+            📺 VISITAR PUBLICIDAD
+        </a>
+    </section>
+
+    <section class="card">
+        <h2 class="section-title">⛏️ ¿Cómo funciona?</h2>
+
+        <div class="info-row">
+            <div class="info-icon">⛏️</div>
+            <div class="info-text">
+                <strong>Minería de recompensas</strong>
+                <span>Obtén TRX participando en el sistema de minado del bot.</span>
+            </div>
+        </div>
+
+        <div class="info-row">
+            <div class="info-icon">🎁</div>
+            <div class="info-text">
+                <strong>Bonificación diaria</strong>
+                <span>Accede cada día para reclamar tu recompensa diaria.</span>
+            </div>
+        </div>
+
+        <div class="info-row">
+            <div class="info-icon">📺</div>
+            <div class="info-text">
+                <strong>Recompensas publicitarias</strong>
+                <span>Accede a las promociones publicitarias disponibles en el bot.</span>
+            </div>
+        </div>
+
+        <div class="info-row">
+            <div class="info-icon">👥</div>
+            <div class="info-text">
+                <strong>Programa de referidos</strong>
+                <span>Invita a otros usuarios y obtén recompensas por referidos.</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="card">
+        <h2 class="section-title">💰 Recompensas</h2>
+
+        <div class="reward">
+            <span>⛏️ Minado</span>
+            <span class="reward-value">2 Sun</span>
+        </div>
+
+        <div class="reward">
+            <span>📺 Publicidad</span>
+            <span class="reward-value">1 Sun</span>
+        </div>
+
+        <div class="reward">
+            <span>🎁 Bonus diario</span>
+            <span class="reward-value">5 Sun</span>
+        </div>
+
+        <div class="reward">
+            <span>👥 Referido</span>
+            <span class="reward-value">100 Sun</span>
+        </div>
+
+        <p class="note">
+            1 TRX = 1.000.000 Sun
+        </p>
+    </section>
+
+    <section class="card vip-box">
+        <h2 class="section-title">⭐ Sistema VIP</h2>
+
+        <div class="info-row">
+            <div class="info-icon">👑</div>
+            <div class="info-text">
+                <strong>Mejora tu experiencia de minado</strong>
+                <span>Disfruta de multiplicadores, mayor velocidad y límites ampliados.</span>
+            </div>
+        </div>
+
+        <a class="button button-vip"
+           href="https://t.me/criptooTRXbot"
+           target="_blank">
+            ⭐ CONSEGUIR VIP
+        </a>
+    </section>
+
+    <section class="card">
+        <h2 class="section-title">📤 Retiradas</h2>
+
+        <div class="info-row">
+            <div class="info-icon">💸</div>
+            <div class="info-text">
+                <strong>Retira tus recompensas</strong>
+                <span>Consulta tu saldo y solicita retiradas cuando alcances el mínimo establecido.</span>
+            </div>
+        </div>
+
+        <a class="button button-primary"
+           href="https://t.me/criptooTRXbot"
+           target="_blank">
+            💎 CONSULTAR SALDO Y RETIRAR
+        </a>
+    </section>
+
+    <footer class="footer">
+        <p><strong>criptooTRXbot</strong></p>
+        <p>Plataforma de recompensas digitales TRX.</p>
+        <p>Las recompensas están sujetas a las condiciones del bot.</p>
+        <hr>
+        <p>© 2026 criptooTRXbot · Todos los derechos reservados</p>
+        <p>
+            <a href="https://t.me/criptooTRXbot" target="_blank">
+                Telegram oficial
+            </a>
+        </p>
+    </footer>
+
 </div>
-<script>
-const tg = window.Telegram?.WebApp;
-if(tg){ tg.ready(); tg.expand(); document.getElementById('tgBadge').textContent='Conectado a Telegram'; }
-function sendAction(action){
-  if(!tg || typeof tg.sendData!=='function'){setStatus('Abre esta página desde el botón Mini App de Telegram para usar los controles.');return;}
-  tg.sendData(action); setStatus('Solicitud enviada al bot. Revisa el chat para la confirmación.');
-}
-function setStatus(text){document.getElementById('status').textContent=text;}
-async function watchRewarded(){
-  if(typeof window.show_12299648!=='function'){setStatus('SDK de Monetag aún no está cargado. Añade el script tag oficial de tu panel Monetag.');return;}
-  setStatus('Cargando anuncio…');
-  try{
-    const result=await window.show_12299648({ymid:'tg_'+(tg?.initDataUnsafe?.user?.id||'anon')+'_'+Date.now(),requestVar:'miniapp_reward'});
-    if(result?.reward_event_type==='valued'){
-      sendAction('adclaim');setStatus('Evento de anuncio confirmado por Monetag. Recompensa solicitada al bot.');
-    }else{setStatus('Anuncio cerrado, pero Monetag no confirmó evento monetizado. No se concede recompensa.');}
-  }catch(e){setStatus('No se pudo mostrar o verificar el anuncio. Inténtalo más tarde.');}
-}
-async function watchPopup(){
-  if(typeof window.show_12299648!=='function'){setStatus('SDK de Monetag aún no está cargado.');return;}
-  try{await window.show_12299648('pop');setStatus('Popup publicitario abierto.');}catch(e){setStatus('No se pudo abrir el popup publicitario.');}
-}
-// Configuración de In-App Interstitial solicitada (requiere SDK Monetag real).
-window.addEventListener('load',()=>{
-  if(typeof window.show_12299648==='function'){
-    window.show_12299648({type:'inApp',inAppSettings:{frequency:2,capping:0.1,interval:30,timeout:5,everyPage:false}})
-      .catch(()=>{ /* no interrumpir la mini app si el formato no está disponible */ });
-    document.getElementById('adStatus').textContent='SDK detectado: formatos rewarded, popup e interstitial disponibles si Monetag los sirve.';
-  }
-});
-</script>
+
 </body>
 </html>
+
