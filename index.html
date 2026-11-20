@@ -1,376 +1,157 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#07111f">
-<title>criptooTRXbot | TRX Rewards</title>
-
-<style>
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-body {
-    background: #07111f;
-    color: #f1f5f9;
-    font-family: Arial, Helvetica, sans-serif;
-    min-height: 100vh;
-}
-
-.container {
-    width: 100%;
-    max-width: 480px;
-    margin: auto;
-    padding: 20px 16px 35px;
-}
-
-.header {
-    text-align: center;
-    padding: 24px 10px;
-}
-
-.logo {
-    width: 82px;
-    height: 82px;
-    margin: auto;
-    border-radius: 24px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: linear-gradient(135deg, #00d2ff, #0066ff);
-    box-shadow: 0 0 30px rgba(0, 150, 255, 0.2);
-    font-size: 38px;
-}
-
-.header h1 {
-    margin-top: 17px;
-    font-size: 27px;
-    font-weight: 900;
-}
-
-.header h1 span {
-    color: #00d2ff;
-}
-
-.subtitle {
-    margin-top: 8px;
-    color: #94a3b8;
-    font-size: 13px;
-}
-
-.card {
-    background: #101e30;
-    border: 1px solid #20334b;
-    border-radius: 18px;
-    padding: 20px;
-    margin-bottom: 15px;
-}
-
-.balance-card {
-    background: linear-gradient(145deg, #102b46, #102033);
-    border: 1px solid #15537b;
-    text-align: center;
-    padding: 25px 15px;
-}
-
-.label {
-    font-size: 12px;
-    color: #91a8bf;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-}
-
-.balance {
-    font-size: 34px;
-    font-weight: 900;
-    color: #00d2ff;
-    margin: 12px 0 5px;
-}
-
-.balance small {
-    font-size: 16px;
-}
-
-.note {
-    color: #94a3b8;
-    font-size: 12px;
-    margin-top: 10px;
-}
-
-.section-title {
-    font-size: 17px;
-    font-weight: 800;
-    margin-bottom: 16px;
-}
-
-.button {
-    width: 100%;
-    border: none;
-    border-radius: 13px;
-    padding: 15px;
-    margin-top: 10px;
-    font-size: 15px;
-    font-weight: 800;
-    text-decoration: none;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-}
-
-.button-primary {
-    background: linear-gradient(90deg, #00bfff, #087cff);
-    color: white;
-}
-
-.button-telegram {
-    background: #229ed9;
-    color: white;
-}
-
-.button-ad {
-    background: #172c43;
-    border: 1px solid #294766;
-    color: #d8eaff;
-}
-
-.button-vip {
-    background: linear-gradient(90deg, #a56a13, #e8b83f);
-    color: #17120a;
-}
-
-.info-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin: 13px 0;
-}
-
-.info-icon {
-    width: 42px;
-    height: 42px;
-    border-radius: 12px;
-    background: #172c43;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    flex-shrink: 0;
-}
-
-.info-text strong {
-    display: block;
-    font-size: 14px;
-    margin-bottom: 4px;
-}
-
-.info-text span {
-    font-size: 12px;
-    color: #94a3b8;
-}
-
-.reward {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 0;
-    border-bottom: 1px solid #20334b;
-    font-size: 13px;
-}
-
-.reward:last-child {
-    border-bottom: none;
-}
-
-.reward-value {
-    color: #00d2ff;
-    font-weight: bold;
-}
-
-.vip-box {
-    border-color: #8a641f;
-    background: linear-gradient(145deg, #2a2314, #171e29);
-}
-
-.vip-box .section-title {
-    color: #f4c452;
-}
-
-.footer {
-    text-align: center;
-    padding: 20px 5px;
-    color: #62758b;
-    font-size: 11px;
-    line-height: 1.7;
-}
-
-.footer a {
-    color: #00bfff;
-    text-decoration: none;
-}
-
-hr {
-    border: 0;
-    border-top: 1px solid #20334b;
-    margin: 15px 0;
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tamagochibot — Telegram Mini App</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --vip: #f59e0b;
+    }
+    * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
+    body {
+      margin: 0; padding: 16px;
+      background: var(--tg-theme-bg-color, var(--bg));
+      color: var(--tg-theme-text-color, var(--text));
+    }
+    .box {
+      max-width: 440px; margin: 0 auto;
+      background: var(--tg-theme-secondary-bg-color, var(--card));
+      border-radius: 18px; padding: 18px;
+    }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .tag {
+      font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px;
+      background: rgba(245, 158, 11, 0.18); color: var(--vip); border: 1px solid var(--vip);
+    }
+    .stage {
+      background: #0b1120; border: 2px solid #334155; border-radius: 16px;
+      padding: 22px 12px; text-align: center; margin-bottom: 16px;
+    }
+    .pet {
+      font-size: 40px; font-weight: 800; display: inline-block;
+      animation: bounce 2s ease-in-out infinite;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+    .sub { color: var(--muted); font-size: 13px; margin-top: 8px; }
+    .bar-wrap { margin-bottom: 11px; }
+    .bar-top { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; }
+    .bar-bg { height: 9px; background: #334155; border-radius: 999px; overflow: hidden; }
+    .bar-fill { height: 100%; background: var(--accent); transition: width 0.25s; }
+    .actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 14px; }
+    button {
+      border: 0; border-radius: 12px; padding: 11px 8px; font-weight: 700;
+      font-size: 13px; cursor: pointer; background: #334155; color: #fff;
+    }
+    .vip-card {
+      margin-top: 16px; padding-top: 14px; border-top: 1px solid #334155;
+    }
+    .vip-btn {
+      width: 100%; margin-top: 8px;
+      background: linear-gradient(90deg, #d97706, #f59e0b); color: #0f172a;
+    }
+  </style>
 </head>
-
 <body>
+  <div class="box">
+    <div class="header">
+      <strong>🐾 tamagochibot</strong>
+      <span id="vipStatus" class="tag">VIP 24h • 15 ⭐</span>
+    </div>
 
-<div class="container">
+    <div class="stage">
+      <div id="petFace" class="pet">★( ^o^ )★</div>
+      <div id="petMsg" class="sub">Listo para jugar y ganar Estrellas</div>
+    </div>
 
-    <header class="header">
-        <div class="logo">⚡</div>
-        <h1>criptoo<span>TRX</span>bot</h1>
-        <p class="subtitle">TRON rewards · Mining · Crypto</p>
-    </header>
+    <div class="bar-wrap">
+      <div class="bar-top"><span>🍖 Hambre</span><span id="hambreTxt">70%</span></div>
+      <div class="bar-bg"><div id="hambreBar" class="bar-fill" style="width:70%"></div></div>
+    </div>
 
-    <section class="card balance-card">
-        <div class="label">Sistema de recompensas TRX</div>
-        <div class="balance">TRX <small>⚡</small></div>
-        <p class="note">
-            Gestiona tus recompensas directamente desde nuestro bot de Telegram.
-        </p>
-    </section>
+    <div class="bar-wrap">
+      <div class="bar-top"><span>🎾 Felicidad</span><span id="felicidadTxt">75%</span></div>
+      <div class="bar-bg"><div id="felicidadBar" class="bar-fill" style="width:75%"></div></div>
+    </div>
 
-    <section class="card">
-        <h2 class="section-title">🚀 Accede a tu cuenta</h2>
+    <div class="bar-wrap">
+      <div class="bar-top"><span>⚡ Energía</span><span id="energiaTxt">80%</span></div>
+      <div class="bar-bg"><div id="energiaBar" class="bar-fill" style="width:80%"></div></div>
+    </div>
 
-        <a class="button button-telegram"
-           href="https://t.me/criptooTRXbot"
-           target="_blank">
-            🤖 ABRIR BOT DE TELEGRAM
-        </a>
+    <div class="actions">
+      <button onclick="cuidar('alimentar', 20, 5, 0, '🍖 ¡Alimentado!')">🍖 Comer</button>
+      <button onclick="cuidar('jugar', -5, 25, -10, '🎾 ¡Jugando!')">🎾 Jugar</button>
+      <button onclick="cuidar('dormir', 0, 0, 30, '💤 ¡Durmiendo!')">💤 Dormir</button>
+    </div>
 
-        <a class="button button-ad"
-           href="https://uplcm.com/4/12182862"
-           target="_blank">
-            📺 VISITAR PUBLICIDAD
-        </a>
-    </section>
+    <div class="vip-card">
+      <strong>⭐ Mejoras VIP con Telegram Stars</strong>
+      <button class="vip-btn" onclick="pedirFactura('/buy_vip')">👑 Pase VIP 24h (15 ⭐)</button>
+      <button class="vip-btn" onclick="pedirFactura('/buy_banquete')">🍖 Banquete Real 100% (10 ⭐)</button>
+      <button class="vip-btn" onclick="pedirFactura('/buy_energia')">⚡ Súper Batería 100% (10 ⭐)</button>
+    </div>
+  </div>
 
-    <section class="card">
-        <h2 class="section-title">⛏️ ¿Cómo funciona?</h2>
+  <script>
+    const tg = window.Telegram.WebApp;
+    tg.ready();
+    tg.expand();
 
-        <div class="info-row">
-            <div class="info-icon">⛏️</div>
-            <div class="info-text">
-                <strong>Minería de recompensas</strong>
-                <span>Obtén TRX participando en el sistema de minado del bot.</span>
-            </div>
-        </div>
+    let state = { hambre: 70, felicidad: 75, energia: 80 };
 
-        <div class="info-row">
-            <div class="info-icon">🎁</div>
-            <div class="info-text">
-                <strong>Bonificación diaria</strong>
-                <span>Accede cada día para reclamar tu recompensa diaria.</span>
-            </div>
-        </div>
+    function clamp(v) { return Math.max(0, Math.min(100, v)); }
 
-        <div class="info-row">
-            <div class="info-icon">📺</div>
-            <div class="info-text">
-                <strong>Recompensas publicitarias</strong>
-                <span>Accede a las promociones publicitarias disponibles en el bot.</span>
-            </div>
-        </div>
+    function render(msg) {
+      state.hambre = clamp(state.hambre);
+      state.felicidad = clamp(state.felicidad);
+      state.energia = clamp(state.energia);
 
-        <div class="info-row">
-            <div class="info-icon">👥</div>
-            <div class="info-text">
-                <strong>Programa de referidos</strong>
-                <span>Invita a otros usuarios y obtén recompensas por referidos.</span>
-            </div>
-        </div>
-    </section>
+      document.getElementById('hambreTxt').textContent = state.hambre + '%';
+      document.getElementById('hambreBar').style.width = state.hambre + '%';
+      document.getElementById('felicidadTxt').textContent = state.felicidad + '%';
+      document.getElementById('felicidadBar').style.width = state.felicidad + '%';
+      document.getElementById('energiaTxt').textContent = state.energia + '%';
+      document.getElementById('energiaBar').style.width = state.energia + '%';
 
-    <section class="card">
-        <h2 class="section-title">💰 Recompensas</h2>
+      const face = document.getElementById('petFace');
+      if (state.hambre < 25 || state.energia < 20) face.textContent = '(×_×)';
+      else if (state.felicidad < 35) face.textContent = '(•︵•)';
+      else face.textContent = '★( ^o^ )★';
 
-        <div class="reward">
-            <span>⛏️ Minado</span>
-            <span class="reward-value">2 Sun</span>
-        </div>
+      if (msg) document.getElementById('petMsg').textContent = msg;
+    }
 
-        <div class="reward">
-            <span>📺 Publicidad</span>
-            <span class="reward-value">1 Sun</span>
-        </div>
+    function cuidar(accion, dh, df, de, msg) {
+      state.hambre += dh;
+      state.felicidad += df;
+      state.energia += de;
+      render(msg);
 
-        <div class="reward">
-            <span>🎁 Bonus diario</span>
-            <span class="reward-value">5 Sun</span>
-        </div>
+      // Si se abrió desde un teclado con web_app, envía la acción al bot
+      try {
+        tg.sendData(JSON.stringify({ action: accion }));
+      } catch (e) {}
+    }
 
-        <div class="reward">
-            <span>👥 Referido</span>
-            <span class="reward-value">100 Sun</span>
-        </div>
+    function pedirFactura(comandoCompra) {
+      // Abre el bot con el comando de compra o cierra el Mini App enviando el comando
+      try {
+        tg.sendData(JSON.stringify({ command: comandoCompra }));
+      } catch (e) {}
+      tg.openTelegramLink('https://t.me/tamagochibot?text=' + encodeURIComponent(comandoCompra));
+    }
 
-        <p class="note">
-            1 TRX = 1.000.000 Sun
-        </p>
-    </section>
-
-    <section class="card vip-box">
-        <h2 class="section-title">⭐ Sistema VIP</h2>
-
-        <div class="info-row">
-            <div class="info-icon">👑</div>
-            <div class="info-text">
-                <strong>Mejora tu experiencia de minado</strong>
-                <span>Disfruta de multiplicadores, mayor velocidad y límites ampliados.</span>
-            </div>
-        </div>
-
-        <a class="button button-vip"
-           href="https://t.me/criptooTRXbot"
-           target="_blank">
-            ⭐ CONSEGUIR VIP
-        </a>
-    </section>
-
-    <section class="card">
-        <h2 class="section-title">📤 Retiradas</h2>
-
-        <div class="info-row">
-            <div class="info-icon">💸</div>
-            <div class="info-text">
-                <strong>Retira tus recompensas</strong>
-                <span>Consulta tu saldo y solicita retiradas cuando alcances el mínimo establecido.</span>
-            </div>
-        </div>
-
-        <a class="button button-primary"
-           href="https://t.me/criptooTRXbot"
-           target="_blank">
-            💎 CONSULTAR SALDO Y RETIRAR
-        </a>
-    </section>
-
-    <footer class="footer">
-        <p><strong>criptooTRXbot</strong></p>
-        <p>Plataforma de recompensas digitales TRX.</p>
-        <p>Las recompensas están sujetas a las condiciones del bot.</p>
-        <hr>
-        <p>© 2026 criptooTRXbot · Todos los derechos reservados</p>
-        <p>
-            <a href="https://t.me/criptooTRXbot" target="_blank">
-                Telegram oficial
-            </a>
-        </p>
-    </footer>
-
-</div>
-
+    render();
+  </script>
 </body>
 </html>
-
