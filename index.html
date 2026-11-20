@@ -14,11 +14,13 @@
       --muted: #94a3b8;
       --accent: #38bdf8;
       --vip: #f59e0b;
-      --ok: #22c55e;
       --food: #fb923c;
       --water: #38bdf8;
       --play: #4ade80;
       --sleep: #a78bfa;
+      --clean: #2dd4bf;
+      --bath: #60a5fa;
+      --heal: #f43f5e;
     }
 
     * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; user-select: none; }
@@ -58,6 +60,24 @@
       font-weight: 700;
     }
 
+    .alert-banner {
+      display: none;
+      background: rgba(244, 63, 94, 0.16);
+      border: 1px solid rgba(244, 63, 94, 0.6);
+      color: #fecdd3;
+      border-radius: 12px;
+      padding: 8px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      animation: pulseAlert 1.5s infinite;
+    }
+    .alert-banner.show { display: block; }
+    @keyframes pulseAlert {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.72; }
+    }
+
     .tabs {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -78,16 +98,11 @@
       font-weight: 700;
       cursor: pointer;
     }
-
-    .tab-btn.active {
-      background: #1e293b;
-      color: #fff;
-    }
+    .tab-btn.active { background: #1e293b; color: #fff; }
 
     .panel { display: none; }
     .panel.active { display: block; }
 
-    /* Escenario animado */
     .stage {
       position: relative;
       height: 245px;
@@ -98,10 +113,8 @@
       margin-bottom: 12px;
       transition: filter 0.4s ease;
     }
-
-    .stage.night {
-      filter: brightness(0.58) contrast(1.05);
-    }
+    .stage.night { filter: brightness(0.58) contrast(1.05); }
+    .stage.sick { box-shadow: inset 0 0 28px rgba(244, 63, 94, 0.35); }
 
     .hud-top {
       position: absolute;
@@ -132,7 +145,6 @@
       transform: translateX(-50%);
       background: rgba(0, 0, 0, 0.35);
       border-radius: 50%;
-      transition: transform 0.35s ease, left 0.35s ease;
     }
 
     .pet-wrap {
@@ -147,17 +159,13 @@
       transition: left 0.45s ease-in-out, transform 0.25s ease;
     }
 
-    /* Idle respiración */
-    .pet-wrap.idle {
-      animation: breathe 2.4s ease-in-out infinite;
-    }
+    .pet-wrap.idle { animation: breathe 2.4s ease-in-out infinite; }
     @keyframes breathe {
       0%, 100% { transform: translateX(-50%) scaleY(1) scaleX(1); }
       50% { transform: translateX(-50%) scaleY(1.03) scaleX(0.98); }
     }
 
-    /* Ir a comer y mordisquear */
-    .pet-wrap.walk-eat {
+    .pet-wrap.walk-eat, .pet-wrap.walk-drink {
       left: 62%;
       animation: walkBob 0.3s ease-in-out infinite;
     }
@@ -170,11 +178,6 @@
       50% { transform: translateX(-50%) translateY(7px) rotate(-6deg); }
     }
 
-    /* Ir a beber y tomar agua */
-    .pet-wrap.walk-drink {
-      left: 62%;
-      animation: walkBob 0.3s ease-in-out infinite;
-    }
     .pet-wrap.drinking {
       left: 65%;
       animation: gulp 0.38s ease-in-out infinite;
@@ -184,7 +187,6 @@
       50% { transform: translateX(-50%) translateY(8px) rotate(7deg); }
     }
 
-    /* Jugar con pelota */
     .pet-wrap.playing {
       left: 42%;
       animation: jumpPlay 0.5s ease-in-out infinite;
@@ -194,7 +196,15 @@
       50% { transform: translateX(-50%) translateY(-30px) scale(1.05, 0.95); }
     }
 
-    /* Dormir */
+    .pet-wrap.bathing {
+      left: 50%;
+      animation: scrub 0.35s ease-in-out infinite;
+    }
+    @keyframes scrub {
+      0%, 100% { transform: translateX(-50%) rotate(-4deg); }
+      50% { transform: translateX(-50%) rotate(4deg); }
+    }
+
     .pet-wrap.sleeping {
       left: 50%;
       animation: sleepSway 3s ease-in-out infinite;
@@ -209,7 +219,19 @@
       50% { transform: translateX(-50%) translateY(-6px); }
     }
 
-    /* Props en escena */
+    .poop-pile {
+      position: absolute;
+      bottom: 22px;
+      left: 24px;
+      font-size: 28px;
+      opacity: 0;
+      cursor: pointer;
+      z-index: 5;
+      transition: transform 0.2s, opacity 0.25s;
+    }
+    .poop-pile.show { opacity: 1; }
+    .poop-pile:hover { transform: scale(1.15); }
+
     .dish {
       position: absolute;
       bottom: 24px;
@@ -251,16 +273,13 @@
       z-index: 6;
       pointer-events: none;
     }
-    .fx-pop.active {
-      animation: popUp 0.9s ease-out infinite;
-    }
+    .fx-pop.active { animation: popUp 0.9s ease-out infinite; }
     @keyframes popUp {
       0% { opacity: 0; transform: translateY(8px) scale(0.8); }
       35% { opacity: 1; }
       100% { opacity: 0; transform: translateY(-24px) scale(1.2); }
     }
 
-    /* Parpadeo y cola */
     .lid {
       transform-box: fill-box;
       transform-origin: center;
@@ -282,25 +301,23 @@
       50% { transform: rotate(15deg); }
     }
 
-    /* Barras */
-    .stat { margin-bottom: 9px; }
-    .stat-top { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; }
-    .bar { height: 9px; background: var(--card2); border-radius: 999px; overflow: hidden; }
+    .stat { margin-bottom: 8px; }
+    .stat-top { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 3px; }
+    .bar { height: 8px; background: var(--card2); border-radius: 999px; overflow: hidden; }
     .fill { height: 100%; border-radius: 999px; transition: width 0.25s ease; }
 
-    /* Botones */
-    .grid-4 {
+    .grid-3 {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 7px;
       margin-top: 10px;
     }
 
     .btn {
       border: 0;
       border-radius: 12px;
-      padding: 11px 10px;
-      font-size: 13px;
+      padding: 10px 8px;
+      font-size: 12px;
       font-weight: 800;
       cursor: pointer;
       color: #090e1a;
@@ -311,16 +328,25 @@
     .c-food { background: var(--food); }
     .c-water { background: var(--water); }
     .c-play { background: var(--play); }
+    .c-clean { background: var(--clean); }
+    .c-bath { background: var(--bath); }
     .c-sleep { background: var(--sleep); color: #fff; }
+    .c-heal {
+      width: 100%;
+      margin-top: 7px;
+      background: var(--heal);
+      color: #fff;
+      display: none;
+    }
+    .c-heal.show { display: block; }
     .c-pet {
       width: 100%;
-      margin-top: 8px;
+      margin-top: 7px;
       background: #1e293b;
       color: #fff;
       border: 1px solid #334155;
     }
 
-    /* Tarjetas VIP y Mascotas */
     .item-card {
       background: var(--card2);
       border: 1px solid #263652;
@@ -328,12 +354,7 @@
       padding: 12px;
       margin-bottom: 10px;
     }
-    .item-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 5px;
-    }
+    .item-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
     .item-title { font-size: 14px; font-weight: 800; }
     .price-tag {
       background: rgba(245, 158, 11, 0.16);
@@ -345,16 +366,8 @@
       font-weight: 800;
     }
     .item-desc { font-size: 12px; color: var(--muted); line-height: 1.4; margin-bottom: 8px; }
-    .btn-gold {
-      width: 100%;
-      background: linear-gradient(90deg, #d97706, #fbbf24);
-      color: #090e1a;
-    }
-    .btn-use {
-      width: 100%;
-      background: #2563eb;
-      color: #fff;
-    }
+    .btn-gold { width: 100%; background: linear-gradient(90deg, #d97706, #fbbf24); color: #090e1a; }
+    .btn-use { width: 100%; background: #2563eb; color: #fff; }
 
     .log-box {
       background: var(--card2);
@@ -362,7 +375,7 @@
       padding: 10px;
       font-size: 12px;
       color: var(--muted);
-      max-height: 180px;
+      max-height: 145px;
       overflow-y: auto;
     }
     .log-entry { padding: 4px 0; border-bottom: 1px solid #1b2740; }
@@ -375,60 +388,52 @@
       <div id="lvlBadge" class="lvl-pill">Nv. 1 • 0 XP</div>
     </div>
 
+    <div id="alertBanner" class="alert-banner">⚠️ Aviso: tu mascota necesita atención.</div>
+
     <div class="tabs">
       <button class="tab-btn active" onclick="switchTab('main', this)">Mascota</button>
       <button class="tab-btn" onclick="switchTab('pets', this)">Mascotas VIP</button>
       <button class="tab-btn" onclick="switchTab('vip', this)">Mejoras ⭐</button>
     </div>
 
-    <!-- PANEL 1: MASCOTA -->
+    <!-- PANEL MASCOTA -->
     <div id="panel-main" class="panel active">
       <div id="stage" class="stage">
         <div class="hud-top">
-          <div id="statusBubble" class="bubble">😊 Listo para jugar</div>
+          <div id="statusBubble" class="bubble">😊 Saludable</div>
           <div id="activePetName" class="bubble">🦊 Zorro Solar</div>
         </div>
 
+        <div id="poopPile" class="poop-pile" onclick="cleanPoop()" title="Toca para limpiar">💩</div>
         <div id="fxPop" class="fx-pop">😋</div>
         <div id="dish" class="dish">🍖</div>
         <div id="toyBall" class="toy-ball"></div>
-        <div id="floorShadow" class="floor-shadow"></div>
+        <div class="floor-shadow"></div>
 
         <div id="petWrap" class="pet-wrap idle">
           <svg viewBox="0 0 160 160" width="146" height="146">
-            <!-- Cola -->
             <path id="petTail" class="tail" d="M 112 118 Q 146 95 138 70 Q 132 60 123 69 Q 128 88 106 108 Z" fill="#d97706"/>
-            <!-- Patas traseras -->
             <ellipse id="legBackL" cx="60" cy="134" rx="14" ry="9" fill="#b45309"/>
             <ellipse id="legBackR" cx="100" cy="134" rx="14" ry="9" fill="#b45309"/>
-            <!-- Cuerpo -->
             <ellipse id="petBody" cx="80" cy="108" rx="34" ry="28" fill="#f59e0b"/>
             <ellipse id="petBelly" cx="80" cy="112" rx="22" ry="18" fill="#fef3c7"/>
-            <!-- Patas delanteras -->
             <rect id="legFrontL" x="54" y="114" width="12" height="20" rx="6" fill="#d97706"/>
             <rect id="legFrontR" x="94" y="114" width="12" height="20" rx="6" fill="#d97706"/>
-            <!-- Orejas -->
             <polygon id="earL" points="48,58 38,22 64,46" fill="#d97706"/>
             <polygon points="50,53 44,31 60,46" fill="#fde68a"/>
             <polygon id="earR" points="112,58 122,22 96,46" fill="#d97706"/>
             <polygon points="110,53 116,31 100,46" fill="#fde68a"/>
-            <!-- Cabeza -->
             <circle id="petHead" cx="80" cy="68" r="32" fill="#fbbf24"/>
-            <!-- Mejillas -->
             <circle cx="58" cy="76" r="6" fill="#fb7185" opacity="0.45"/>
             <circle cx="102" cy="76" r="6" fill="#fb7185" opacity="0.45"/>
-            <!-- Ojos -->
             <circle cx="67" cy="65" r="5.5" fill="#0f172a"/>
             <circle cx="65.5" cy="63" r="2" fill="#ffffff"/>
             <circle cx="93" cy="65" r="5.5" fill="#0f172a"/>
             <circle cx="91.5" cy="63" r="2" fill="#ffffff"/>
-            <!-- Párpados -->
             <rect id="lidL" class="lid" x="61" y="59" width="12" height="12" rx="5" fill="#fbbf24"/>
             <rect id="lidR" class="lid" x="87" y="59" width="12" height="12" rx="5" fill="#fbbf24"/>
-            <!-- Nariz y boca -->
             <ellipse cx="80" cy="73" rx="4.5" ry="3" fill="#7c2d12"/>
             <path id="mouth" d="M 72 79 Q 80 86 88 79" stroke="#7c2d12" stroke-width="2.6" fill="none" stroke-linecap="round"/>
-            <!-- Corona VIP -->
             <g id="crownGroup" opacity="0.2">
               <polygon points="62,35 68,18 80,31 92,18 98,35" fill="#fde047" stroke="#eab308" stroke-width="1.5"/>
             </g>
@@ -452,22 +457,29 @@
         <div class="stat-top"><span>⚡ Energía</span><span id="vEnergia">80%</span></div>
         <div class="bar"><div id="bEnergia" class="fill" style="width:80%; background:var(--sleep);"></div></div>
       </div>
-
-      <div class="grid-4">
-        <button class="btn c-food" onclick="startEat()">🍖 Comer</button>
-        <button class="btn c-water" onclick="startDrink()">💧 Beber Agua</button>
-        <button class="btn c-play" onclick="startPlay()">🎾 Jugar</button>
-        <button class="btn c-sleep" onclick="toggleSleep()">💤 Dormir / Despertar</button>
+      <div class="stat">
+        <div class="stat-top"><span>💩 Suciedad</span><span id="vSuciedad">15%</span></div>
+        <div class="bar"><div id="bSuciedad" class="fill" style="width:15%; background:var(--clean);"></div></div>
       </div>
 
+      <div class="grid-3">
+        <button class="btn c-food" onclick="startEat()">🍖 Comer</button>
+        <button class="btn c-water" onclick="startDrink()">💧 Agua</button>
+        <button class="btn c-play" onclick="startPlay()">🎾 Jugar</button>
+        <button class="btn c-clean" onclick="cleanPoop()">🧹 Limpiar</button>
+        <button class="btn c-bath" onclick="startBath()">🛁 Bañar</button>
+        <button class="btn c-sleep" onclick="toggleSleep()">💤 Dormir</button>
+      </div>
+
+      <button id="healBtn" class="btn c-heal" onclick="healPet()">💊 Curar Mascota Enferma</button>
       <button class="btn c-pet" onclick="patPet()">💖 Acariciar (+XP y Felicidad)</button>
 
       <div class="log-box" id="logBox" style="margin-top:10px;">
-        <div class="log-entry">Actividad reciente de tu mascota aparecerá aquí.</div>
+        <div class="log-entry">• Avisos y acciones de tu mascota aparecerán aquí.</div>
       </div>
     </div>
 
-    <!-- PANEL 2: MASCOTAS VIP -->
+    <!-- PANEL MASCOTAS VIP -->
     <div id="panel-pets" class="panel">
       <div class="item-card">
         <div class="item-head">
@@ -475,80 +487,66 @@
           <span class="price-tag">Gratis</span>
         </div>
         <div class="item-desc">Mascota inicial equilibrada. Ideal para empezar a cuidar y subir de nivel.</div>
-        <button class="btn btn-use" onclick="selectPet('fox', '🦊 Zorro Solar', '#fbbf24', '#d97706', '#fef3c7', false)">Usar Zorro Solar</button>
+        <button class="btn btn-use" onclick="selectPet('🦊 Zorro Solar', '#fbbf24', '#d97706', '#fef3c7', false)">Usar Zorro Solar</button>
       </div>
-
       <div class="item-card">
         <div class="item-head">
           <span class="item-title">🐺 Lobo Cibernético</span>
           <span class="price-tag">20 ⭐</span>
         </div>
         <div class="item-desc">Aspecto azul neón con alta energía y animaciones rápidas de juego.</div>
-        <button class="btn btn-gold" onclick="buyPet('wolf', '🐺 Lobo Cibernético', '#38bdf8', '#0284c7', '#e0f2fe', '/buy_pet_wolf')">Comprar por 20 ⭐</button>
+        <button class="btn btn-gold" onclick="buyPet('🐺 Lobo Cibernético', '#38bdf8', '#0284c7', '#e0f2fe', '/buy_pet_wolf')">Comprar por 20 ⭐</button>
       </div>
-
       <div class="item-card">
         <div class="item-head">
           <span class="item-title">🐉 Dragón Estelar</span>
           <span class="price-tag">35 ⭐</span>
         </div>
         <div class="item-desc">Mascota mítica morada con corona activa y mayor bonificación de felicidad.</div>
-        <button class="btn btn-gold" onclick="buyPet('dragon', '🐉 Dragón Estelar', '#a855f7', '#7e22ce', '#f3e8ff', '/buy_pet_dragon')">Comprar por 35 ⭐</button>
+        <button class="btn btn-gold" onclick="buyPet('🐉 Dragón Estelar', '#a855f7', '#7e22ce', '#f3e8ff', '/buy_pet_dragon')">Comprar por 35 ⭐</button>
       </div>
-
       <div class="item-card">
         <div class="item-head">
           <span class="item-title">👑 Gato Real Dorado</span>
           <span class="price-tag">50 ⭐</span>
         </div>
         <div class="item-desc">Edición dorada de lujo: corona brillante permanente y +25% XP por acción.</div>
-        <button class="btn btn-gold" onclick="buyPet('royalcat', '👑 Gato Real Dorado', '#facc15', '#ca8a04', '#fef9c3', '/buy_pet_royalcat')">Comprar por 50 ⭐</button>
+        <button class="btn btn-gold" onclick="buyPet('👑 Gato Real Dorado', '#facc15', '#ca8a04', '#fef9c3', '/buy_pet_royalcat')">Comprar por 50 ⭐</button>
       </div>
     </div>
 
-    <!-- PANEL 3: MEJORAS VIP CON ESTRELLAS -->
+    <!-- PANEL MEJORAS VIP -->
     <div id="panel-vip" class="panel">
       <div class="item-card">
         <div class="item-head">
           <span class="item-title">👑 Pase VIP 24 Horas</span>
           <span class="price-tag">15 ⭐</span>
         </div>
-        <div class="item-desc">
-          <b>Qué hace:</b> Reduce la caída de Hambre, Sed y Energía a <b>1/3 de velocidad</b> y duplica (<b>x2</b>) los puntos recuperados al comer, beber o jugar durante 24h.
-        </div>
+        <div class="item-desc"><b>Qué hace:</b> Reduce la caída de barras a <b>1/3 de velocidad</b> y duplica (<b>x2</b>) la recuperación al cuidar durante 24h.</div>
         <button class="btn btn-gold" onclick="triggerStarPurchase('/buy_vip', 'Pase VIP 24h (15 ⭐)')">Comprar Pase VIP • 15 ⭐</button>
       </div>
-
       <div class="item-card">
         <div class="item-head">
           <span class="item-title">🍖 Banquete Real 100%</span>
           <span class="price-tag">10 ⭐</span>
         </div>
-        <div class="item-desc">
-          <b>Qué hace:</b> Sube al instante <b>Hambre, Sed y Felicidad al 100%</b> y otorga <b>+50 XP</b>.
-        </div>
+        <div class="item-desc"><b>Qué hace:</b> Sube al instante <b>Hambre, Sed y Felicidad al 100%</b>, limpia caca y cura enfermedades.</div>
         <button class="btn btn-gold" onclick="triggerStarPurchase('/buy_banquete', 'Banquete Real 100% (10 ⭐)')">Comprar Banquete • 10 ⭐</button>
       </div>
-
       <div class="item-card">
         <div class="item-head">
           <span class="item-title">⚡ Súper Batería 100%</span>
           <span class="price-tag">10 ⭐</span>
         </div>
-        <div class="item-desc">
-          <b>Qué hace:</b> Carga la <b>Energía al 100%</b> de inmediato para seguir jugando sin esperar a dormir.
-        </div>
+        <div class="item-desc"><b>Qué hace:</b> Carga la <b>Energía al 100%</b> de inmediato para seguir jugando sin esperar.</div>
         <button class="btn btn-gold" onclick="triggerStarPurchase('/buy_energia', 'Súper Batería 100% (10 ⭐)')">Comprar Batería • 10 ⭐</button>
       </div>
-
       <div class="item-card">
         <div class="item-head">
           <span class="item-title">🛡️ Escudo Anti-Caída 12h</span>
           <span class="price-tag">12 ⭐</span>
         </div>
-        <div class="item-desc">
-          <b>Qué hace:</b> Evita que bajen las barras durante <b>12 horas</b> aunque cierres la app o apagues el dispositivo.
-        </div>
+        <div class="item-desc"><b>Qué hace:</b> Evita que bajen las estadísticas durante <b>12 horas</b>.</div>
         <button class="btn btn-gold" onclick="triggerStarPurchase('/buy_escudo', 'Escudo Anti-Caída 12h (12 ⭐)')">Comprar Escudo • 12 ⭐</button>
       </div>
     </div>
@@ -556,16 +554,15 @@
 
   <script>
     const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
-    if (tg) {
-      tg.ready();
-      tg.expand();
-    }
+    if (tg) { tg.ready(); tg.expand(); }
 
     let state = {
       hambre: 70,
       sed: 75,
       felicidad: 75,
       energia: 80,
+      suciedad: 15,
+      enfermo: false,
       xp: 0,
       sleeping: false,
       petName: '🦊 Zorro Solar',
@@ -573,6 +570,7 @@
     };
 
     let seqTimers = [];
+    let lastAlertSignature = '';
 
     function clearTimers() {
       seqTimers.forEach(t => clearTimeout(t));
@@ -595,11 +593,52 @@
       document.getElementById('lvlBadge').textContent = `Nv. ${lvl} • ${state.xp} XP`;
     }
 
+    function evaluarSaludYavisos() {
+      if (state.hambre < 20 || state.suciedad >= 75) {
+        if (!state.enfermo) {
+          state.enfermo = true;
+          addLog('🤒 ¡Tu mascota se ha enfermado! Dale comida, limpia la caca o cúrala.');
+        }
+      }
+
+      const avisos = [];
+      if (state.enfermo) avisos.push('🤒 ¡Está enferma! Usa Curar');
+      if (state.hambre < 25) avisos.push('🍖 ¡Tiene mucha hambre!');
+      if (state.sed < 25) avisos.push('💧 ¡Tiene mucha sed!');
+      if (state.suciedad >= 50) avisos.push('💩 ¡Hay caca / está sucia! Limpia o baña');
+      if (state.energia < 20) avisos.push('😴 ¡Sin energía! Ponla a dormir');
+
+      const banner = document.getElementById('alertBanner');
+      const stage = document.getElementById('stage');
+      const healBtn = document.getElementById('healBtn');
+      const poopEl = document.getElementById('poopPile');
+
+      poopEl.classList.toggle('show', state.suciedad >= 35);
+      stage.classList.toggle('sick', state.enfermo);
+      healBtn.classList.toggle('show', state.enfermo);
+
+      if (avisos.length > 0) {
+        banner.textContent = avisos.join(' • ');
+        banner.classList.add('show');
+        const sig = avisos.join('|');
+        if (sig !== lastAlertSignature) {
+          lastAlertSignature = sig;
+          addLog('⚠️ Aviso: ' + avisos.join(' | '));
+        }
+      } else {
+        banner.classList.remove('show');
+        lastAlertSignature = '';
+      }
+    }
+
     function updateUI(statusMsg) {
       state.hambre = clamp(state.hambre);
       state.sed = clamp(state.sed);
       state.felicidad = clamp(state.felicidad);
       state.energia = clamp(state.energia);
+      state.suciedad = clamp(state.suciedad);
+
+      evaluarSaludYavisos();
 
       document.getElementById('vHambre').textContent = state.hambre + '%';
       document.getElementById('bHambre').style.width = state.hambre + '%';
@@ -613,12 +652,16 @@
       document.getElementById('vEnergia').textContent = state.energia + '%';
       document.getElementById('bEnergia').style.width = state.energia + '%';
 
+      document.getElementById('vSuciedad').textContent = state.suciedad + '%';
+      document.getElementById('bSuciedad').style.width = state.suciedad + '%';
+
       document.getElementById('activePetName').textContent = state.petName;
       document.getElementById('crownGroup').setAttribute('opacity', state.hasCrown ? '1' : '0.15');
 
-      if (statusMsg) {
-        document.getElementById('statusBubble').textContent = statusMsg;
-      }
+      const autoMsg = state.enfermo
+        ? '🤒 Enferma — necesita cuidados'
+        : (state.hambre < 25 ? '🍖 Tiene hambre' : '😊 Saludable');
+      document.getElementById('statusBubble').textContent = statusMsg || autoMsg;
     }
 
     function resetSceneClasses() {
@@ -636,43 +679,43 @@
       state.sleeping = false;
     }
 
-    // 1. Secuencia: coger comida y comérsela
     function startEat() {
       clearTimers();
       resetSceneClasses();
       const wrap = document.getElementById('petWrap');
       const dish = document.getElementById('dish');
       const fx = document.getElementById('fxPop');
+      const factor = state.enfermo ? 0.5 : 1;
 
       dish.textContent = '🍖';
       dish.classList.add('show');
       wrap.className = 'pet-wrap walk-eat';
-      updateUI('🚶 Acercándose a la comida...');
+      updateUI('🚶 Yendo por comida...');
 
       seqTimers.push(setTimeout(() => {
         wrap.className = 'pet-wrap eating';
         fx.textContent = '😋';
         fx.className = 'fx-pop active';
-        updateUI('🍖 ¡Mordisqueando la comida!');
+        updateUI('🍖 ¡Comiéndose la comida!');
       }, 650));
 
       seqTimers.push(setTimeout(() => {
         dish.textContent = '🦴';
         fx.textContent = '💛';
-        state.hambre += 22;
-        state.felicidad += 6;
+        state.hambre += Math.round(24 * factor);
+        state.felicidad += Math.round(5 * factor);
+        state.suciedad += 15;
         addXp(15);
         updateUI('😊 ¡Comida terminada!');
-        addLog('Comió y recuperó +22% Hambre');
+        addLog('Comió (+Hambre, +15% Suciedad)');
       }, 1750));
 
       seqTimers.push(setTimeout(() => {
         resetSceneClasses();
-        updateUI('😊 Listo');
+        updateUI();
       }, 2500));
     }
 
-    // 2. Secuencia: ir al agua y beber
     function startDrink() {
       clearTimers();
       resetSceneClasses();
@@ -683,30 +726,29 @@
       dish.textContent = '🥣';
       dish.classList.add('show');
       wrap.className = 'pet-wrap walk-drink';
-      updateUI('🚶 Yendo al cuenco de agua...');
+      updateUI('🚶 Yendo al agua...');
 
       seqTimers.push(setTimeout(() => {
         wrap.className = 'pet-wrap drinking';
         fx.textContent = '💧';
         fx.className = 'fx-pop active';
-        updateUI('💧 ¡Bebiendo agua fresca!');
+        updateUI('💧 ¡Bebiendo agua!');
       }, 650));
 
       seqTimers.push(setTimeout(() => {
         state.sed += 25;
-        state.felicidad += 5;
+        state.felicidad += 4;
         addXp(15);
-        updateUI('💦 ¡Bien hidratado!');
-        addLog('Bebió agua y recuperó +25% Sed');
+        updateUI('💦 ¡Hidratado!');
+        addLog('Bebió agua (+25% Sed)');
       }, 1750));
 
       seqTimers.push(setTimeout(() => {
         resetSceneClasses();
-        updateUI('😊 Listo');
+        updateUI();
       }, 2400));
     }
 
-    // 3. Secuencia: jugar con pelota
     function startPlay() {
       if (state.energia < 10) {
         updateUI('😴 Muy cansado para jugar');
@@ -723,20 +765,53 @@
       wrap.className = 'pet-wrap playing';
       fx.textContent = '🎾';
       fx.className = 'fx-pop active';
-      updateUI('🎾 ¡Saltando con la pelota!');
+      updateUI('🎾 ¡Jugando con la pelota!');
 
       seqTimers.push(setTimeout(() => {
         state.felicidad += 25;
         state.energia -= 12;
         state.sed -= 7;
+        state.suciedad += 10;
         addXp(20);
         resetSceneClasses();
-        updateUI('🎉 ¡Qué divertido fue jugar!');
-        addLog('Jugó (+25% Felicidad, -12% Energía)');
+        updateUI('🎉 ¡Jugó muy bien!');
+        addLog('Jugó (+25% Felicidad, +10% Suciedad)');
       }, 2000));
     }
 
-    // 4. Dormir / Despertar
+    function cleanPoop() {
+      state.suciedad = Math.max(0, state.suciedad - 45);
+      state.felicidad += 5;
+      addXp(10);
+      const fx = document.getElementById('fxPop');
+      fx.textContent = '✨';
+      fx.className = 'fx-pop active';
+      updateUI('🧹 ¡Caca limpiada!');
+      addLog('Limpiaste la caca del suelo');
+      setTimeout(() => { fx.className = 'fx-pop'; }, 1000);
+    }
+
+    function startBath() {
+      clearTimers();
+      resetSceneClasses();
+      const wrap = document.getElementById('petWrap');
+      const fx = document.getElementById('fxPop');
+
+      wrap.className = 'pet-wrap bathing';
+      fx.textContent = '🫧';
+      fx.className = 'fx-pop active';
+      updateUI('🛁 ¡Bañándose con burbujas!');
+
+      seqTimers.push(setTimeout(() => {
+        state.suciedad = 0;
+        state.felicidad += 12;
+        addXp(15);
+        resetSceneClasses();
+        updateUI('✨ ¡Limpio y perfumado!');
+        addLog('Bañaste a tu mascota (Suciedad 0%)');
+      }, 1800));
+    }
+
     function toggleSleep() {
       clearTimers();
       const wrap = document.getElementById('petWrap');
@@ -750,15 +825,27 @@
         wrap.className = 'pet-wrap sleeping';
         fx.textContent = 'Zzz';
         fx.className = 'fx-pop active';
-        state.energia += 20;
+        state.energia += 22;
+        state.hambre -= 6;
         addXp(10);
         updateUI('💤 Durmiendo...');
-        addLog('Se fue a dormir (+20% Energía)');
+        addLog('Durmiendo (+22% Energía)');
       } else {
         resetSceneClasses();
-        updateUI('☀️ ¡Despertó con energía!');
+        updateUI('☀️ ¡Despertó!');
         addLog('Despertó');
       }
+    }
+
+    function healPet() {
+      state.enfermo = false;
+      state.hambre = Math.max(state.hambre, 55);
+      state.sed = Math.max(state.sed, 60);
+      state.suciedad = Math.min(state.suciedad, 20);
+      state.felicidad += 15;
+      addXp(25);
+      updateUI('💊 ¡Curado y sano!');
+      addLog('Curaste a tu mascota de su enfermedad');
     }
 
     function patPet() {
@@ -767,43 +854,33 @@
       const fx = document.getElementById('fxPop');
       fx.textContent = '💖';
       fx.className = 'fx-pop active';
-      updateUI('💖 ¡Le encantan tus caricias!');
+      updateUI('💖 ¡Acariciado!');
       addLog('Acariciaste a tu mascota (+10% Felicidad)');
       setTimeout(() => { fx.className = 'fx-pop'; }, 1000);
     }
 
-    function selectPet(id, label, headColor, bodyColor, bellyColor, crown) {
+    function selectPet(label, headColor, bodyColor, bellyColor, crown) {
       state.petName = label;
       state.hasCrown = crown;
-      document.getElementById('petHead').setAttribute('fill', headColor);
-      document.getElementById('lidL').setAttribute('fill', headColor);
-      document.getElementById('lidR').setAttribute('fill', headColor);
-      document.getElementById('petBody').setAttribute('fill', bodyColor);
-      document.getElementById('petTail').setAttribute('fill', bodyColor);
-      document.getElementById('earL').setAttribute('fill', bodyColor);
-      document.getElementById('earR').setAttribute('fill', bodyColor);
-      document.getElementById('legBackL').setAttribute('fill', bodyColor);
-      document.getElementById('legBackR').setAttribute('fill', bodyColor);
-      document.getElementById('legFrontL').setAttribute('fill', bodyColor);
-      document.getElementById('legFrontR').setAttribute('fill', bodyColor);
+      ['petHead', 'lidL', 'lidR'].forEach(id => document.getElementById(id).setAttribute('fill', headColor));
+      ['petBody', 'petTail', 'earL', 'earR', 'legBackL', 'legBackR', 'legFrontL', 'legFrontR'].forEach(id => {
+        document.getElementById(id).setAttribute('fill', bodyColor);
+      });
       document.getElementById('petBelly').setAttribute('fill', bellyColor);
-
       switchTab('main', document.querySelector('.tab-btn'));
-      updateUI(`✨ Ahora estás con ${label}`);
+      updateUI(`✨ ${label}`);
       addLog(`Cambiaste a ${label}`);
     }
 
-    function buyPet(id, label, headColor, bodyColor, bellyColor, cmd) {
-      selectPet(id, label, headColor, bodyColor, bellyColor, true);
+    function buyPet(label, headColor, bodyColor, bellyColor, cmd) {
+      selectPet(label, headColor, bodyColor, bellyColor, true);
       triggerStarPurchase(cmd, label);
     }
 
     function triggerStarPurchase(cmd, label) {
-      addLog(`Solicitando pago de Estrellas: ${label}`);
+      addLog(`Pago de Estrellas solicitado: ${label}`);
       if (tg) {
-        try {
-          tg.sendData(JSON.stringify({ command: cmd }));
-        } catch (e) {}
+        try { tg.sendData(JSON.stringify({ command: cmd })); } catch (e) {}
         tg.openTelegramLink('https://t.me/tamagochibot?text=' + encodeURIComponent(cmd));
       } else {
         alert('Abre la Mini App desde @tamagochibot en Telegram para pagar con Estrellas: ' + cmd);
@@ -817,7 +894,16 @@
       if (btnEl) btnEl.classList.add('active');
     }
 
-    updateUI('😊 Listo para jugar');
+    setInterval(() => {
+      if (state.sleeping) return;
+      state.hambre -= 3;
+      state.sed -= 3;
+      state.energia -= 2;
+      state.suciedad += 4;
+      updateUI();
+    }, 15000);
+
+    updateUI('😊 Saludable');
   </script>
 </body>
 </html>
