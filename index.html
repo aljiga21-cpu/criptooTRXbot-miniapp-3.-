@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>tamagochibot — Bebé, Crecimiento y Supervivencia</title>
+  <title>tamagochibot — Animaciones y Supervivencia</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
@@ -101,7 +101,7 @@
 
     .stage {
       position: relative;
-      height: 245px;
+      height: 250px;
       border-radius: 18px;
       overflow: hidden;
       background: linear-gradient(180deg, #1b365d 0%, #2a4d7a 58%, #3c6e47 58%, #234229 100%);
@@ -109,8 +109,8 @@
       margin-bottom: 12px;
       transition: filter 0.4s ease;
     }
-    .stage.night { filter: brightness(0.58) contrast(1.05); }
-    .stage.dead { filter: grayscale(1) brightness(0.45); }
+    .stage.night { filter: brightness(0.55) contrast(1.05); }
+    .stage.dead { filter: grayscale(1) brightness(0.42); }
 
     .hud-top {
       position: absolute;
@@ -120,7 +120,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      z-index: 5;
+      z-index: 6;
       pointer-events: none;
     }
 
@@ -134,30 +134,88 @@
 
     .floor-shadow {
       position: absolute;
-      bottom: 22px;
+      bottom: 20px;
       left: 50%;
-      width: 110px;
-      height: 20px;
+      width: 106px;
+      height: 18px;
       transform: translateX(-50%);
       background: rgba(0, 0, 0, 0.35);
       border-radius: 50%;
+      transition: left 0.4s ease;
     }
 
     .pet-wrap {
       position: absolute;
-      bottom: 28px;
+      bottom: 26px;
       left: 50%;
       width: 146px;
       height: 146px;
+      --scale: 0.72;
+      transform: translateX(-50%) scale(var(--scale));
       transform-origin: bottom center;
       z-index: 3;
-      transition: left 0.45s ease-in-out, transform 0.35s ease;
+      transition: left 0.45s ease-in-out;
+    }
+
+    /* Movimientos de la mascota */
+    .pet-wrap.move-right {
+      left: 64%;
+      animation: hopStep 0.28s ease-in-out infinite;
+    }
+    .pet-wrap.move-left {
+      left: 38%;
+      animation: hopStep 0.28s ease-in-out infinite;
+    }
+    .pet-wrap.chew-anim {
+      left: 66%;
+      animation: chewHead 0.3s ease-in-out infinite;
+    }
+    .pet-wrap.drink-anim {
+      left: 66%;
+      animation: drinkHead 0.35s ease-in-out infinite;
+    }
+    .pet-wrap.bath-anim {
+      left: 50%;
+      animation: shakeBath 0.25s ease-in-out infinite;
+    }
+    .pet-wrap.sleep-anim {
+      left: 50%;
+      animation: breatheSleep 2.8s ease-in-out infinite;
+    }
+    .pet-wrap.play-anim {
+      left: 42%;
+      animation: playJump 0.48s ease-in-out infinite;
+    }
+
+    @keyframes hopStep {
+      0%, 100% { transform: translateX(-50%) scale(var(--scale)) translateY(0); }
+      50% { transform: translateX(-50%) scale(var(--scale)) translateY(-8px); }
+    }
+    @keyframes chewHead {
+      0%, 100% { transform: translateX(-50%) scale(var(--scale)) translateY(2px) rotate(0deg); }
+      50% { transform: translateX(-50%) scale(var(--scale)) translateY(8px) rotate(-8deg); }
+    }
+    @keyframes drinkHead {
+      0%, 100% { transform: translateX(-50%) scale(var(--scale)) translateY(3px) rotate(2deg); }
+      50% { transform: translateX(-50%) scale(var(--scale)) translateY(10px) rotate(9deg); }
+    }
+    @keyframes shakeBath {
+      0%, 100% { transform: translateX(-50%) scale(var(--scale)) rotate(-7deg) translateY(-2px); }
+      50% { transform: translateX(-50%) scale(var(--scale)) rotate(7deg) translateY(2px); }
+    }
+    @keyframes breatheSleep {
+      0%, 100% { transform: translateX(-50%) scale(var(--scale)) translateY(6px); }
+      50% { transform: translateX(-50%) scale(calc(var(--scale) * 1.03)) translateY(8px); }
+    }
+    @keyframes playJump {
+      0%, 100% { transform: translateX(-50%) scale(var(--scale)) translateY(0); }
+      50% { transform: translateX(-50%) scale(var(--scale)) translateY(-28px); }
     }
 
     .poop-pile {
       position: absolute;
       bottom: 22px;
-      left: 24px;
+      left: 22px;
       font-size: 28px;
       opacity: 0;
       cursor: pointer;
@@ -167,11 +225,11 @@
 
     .dish {
       position: absolute;
-      bottom: 24px;
-      right: 22px;
+      bottom: 22px;
+      right: 20px;
       font-size: 34px;
       opacity: 0;
-      transform: scale(0.7);
+      transform: scale(0.75);
       transition: all 0.25s ease;
       z-index: 4;
     }
@@ -179,7 +237,7 @@
 
     .toy-ball {
       position: absolute;
-      bottom: 28px;
+      bottom: 26px;
       right: 26px;
       width: 28px;
       height: 28px;
@@ -188,18 +246,32 @@
       opacity: 0;
       z-index: 4;
     }
-    .toy-ball.show { opacity: 1; }
+    .toy-ball.show {
+      opacity: 1;
+      animation: ballBounce 0.48s ease-in-out infinite;
+    }
+    @keyframes ballBounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-44px); }
+    }
 
     .fx-pop {
       position: absolute;
-      bottom: 92px;
+      bottom: 94px;
       right: 34px;
-      font-size: 20px;
+      font-size: 22px;
       opacity: 0;
       z-index: 6;
       pointer-events: none;
     }
-    .fx-pop.active { opacity: 1; }
+    .fx-pop.active {
+      animation: floatFx 0.85s ease-out infinite;
+    }
+    @keyframes floatFx {
+      0% { opacity: 0; transform: translateY(6px) scale(0.85); }
+      35% { opacity: 1; }
+      100% { opacity: 0; transform: translateY(-22px) scale(1.15); }
+    }
 
     .stat { margin-bottom: 8px; }
     .stat-top { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 3px; }
@@ -238,7 +310,6 @@
       display: none;
     }
     .c-heal.show { display: block; }
-
     .c-revive {
       width: 100%;
       margin-top: 8px;
@@ -276,7 +347,7 @@
       padding: 10px;
       font-size: 12px;
       color: var(--muted);
-      max-height: 140px;
+      max-height: 135px;
       overflow-y: auto;
     }
     .log-entry { padding: 4px 0; border-bottom: 1px solid #1b2740; }
@@ -313,26 +384,26 @@
 
         <div id="petWrap" class="pet-wrap">
           <svg viewBox="0 0 160 160" width="146" height="146">
-            <path id="petTail" d="M 112 118 Q 146 95 138 70 Q 132 60 123 69 Q 128 88 106 108 Z" fill="#d97706"/>
-            <ellipse id="legBackL" cx="60" cy="134" rx="14" ry="9" fill="#b45309"/>
-            <ellipse id="legBackR" cx="100" cy="134" rx="14" ry="9" fill="#b45309"/>
-            <ellipse id="petBody" cx="80" cy="108" rx="34" ry="28" fill="#f59e0b"/>
-            <ellipse id="petBelly" cx="80" cy="112" rx="22" ry="18" fill="#fef3c7"/>
-            <rect id="legFrontL" x="54" y="114" width="12" height="20" rx="6" fill="#d97706"/>
-            <rect id="legFrontR" x="94" y="114" width="12" height="20" rx="6" fill="#d97706"/>
-            <polygon id="earL" points="48,58 38,22 64,46" fill="#d97706"/>
+            <path d="M 112 118 Q 146 95 138 70 Q 132 60 123 69 Q 128 88 106 108 Z" fill="#d97706"/>
+            <ellipse cx="60" cy="134" rx="14" ry="9" fill="#b45309"/>
+            <ellipse cx="100" cy="134" rx="14" ry="9" fill="#b45309"/>
+            <ellipse cx="80" cy="108" rx="34" ry="28" fill="#f59e0b"/>
+            <ellipse cx="80" cy="112" rx="22" ry="18" fill="#fef3c7"/>
+            <rect x="54" y="114" width="12" height="20" rx="6" fill="#d97706"/>
+            <rect x="94" y="114" width="12" height="20" rx="6" fill="#d97706"/>
+            <polygon points="48,58 38,22 64,46" fill="#d97706"/>
             <polygon points="50,53 44,31 60,46" fill="#fde68a"/>
-            <polygon id="earR" points="112,58 122,22 96,46" fill="#d97706"/>
+            <polygon points="112,58 122,22 96,46" fill="#d97706"/>
             <polygon points="110,53 116,31 100,46" fill="#fde68a"/>
-            <circle id="petHead" cx="80" cy="68" r="32" fill="#fbbf24"/>
+            <circle cx="80" cy="68" r="32" fill="#fbbf24"/>
             <circle cx="58" cy="76" r="6" fill="#fb7185" opacity="0.45"/>
             <circle cx="102" cy="76" r="6" fill="#fb7185" opacity="0.45"/>
-            <circle cx="67" cy="65" r="5.5" fill="#0f172a"/>
+            <circle id="eyeL" cx="67" cy="65" r="5.5" fill="#0f172a"/>
             <circle cx="65.5" cy="63" r="2" fill="#ffffff"/>
-            <circle cx="93" cy="65" r="5.5" fill="#0f172a"/>
+            <circle id="eyeR" cx="93" cy="65" r="5.5" fill="#0f172a"/>
             <circle cx="91.5" cy="63" r="2" fill="#ffffff"/>
             <ellipse cx="80" cy="73" rx="4.5" ry="3" fill="#7c2d12"/>
-            <path id="mouth" d="M 72 79 Q 80 86 88 79" stroke="#7c2d12" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+            <path d="M 72 79 Q 80 86 88 79" stroke="#7c2d12" stroke-width="2.6" fill="none" stroke-linecap="round"/>
           </svg>
         </div>
       </div>
@@ -364,7 +435,7 @@
 
       <div id="careGrid" class="grid-3">
         <button class="btn c-food care-btn" onclick="startEat()">🍖 Comer</button>
-        <button class="btn c-water care-btn" onclick="startDrink()">💧 Agua</button>
+        <button class="btn c-water care-btn" onclick="startDrink()">💧 Beber</button>
         <button class="btn c-play care-btn" onclick="startPlay()">🎾 Jugar</button>
         <button class="btn c-clean care-btn" onclick="cleanPoop()">🧹 Limpiar</button>
         <button class="btn c-bath care-btn" onclick="startBath()">🛁 Bañar</button>
@@ -379,7 +450,7 @@
       </div>
     </div>
 
-    <!-- PANEL MASCOTAS VIP (BLOQUEADAS HASTA PAGO CONFIRMADO) -->
+    <!-- PANEL MASCOTAS VIP -->
     <div id="panel-pets" class="panel">
       <div class="item-card">
         <div class="item-head">
@@ -389,68 +460,65 @@
         <div class="item-desc">Mascota inicial gratuita.</div>
         <button class="btn btn-use" onclick="equipFreeFox()">Usar Zorro Solar</button>
       </div>
-
       <div class="item-card">
         <div class="item-head">
           <span class="item-title">🔒 Lobo Cibernético</span>
           <span class="price-tag">20 ⭐</span>
         </div>
-        <div class="item-desc">Requiere pago confirmado de 20 Estrellas en el bot (`/buy_pet_wolf`).</div>
-        <button class="btn btn-gold" onclick="requestStarPayment('/buy_pet_wolf', 'Lobo Cibernético (20 ⭐)')">Pagar 20 ⭐ para desbloquear</button>
+        <div class="item-desc">En el chat de tu bot escribe <b>/buy_pet_wolf</b> para recibir la factura de 20 ⭐.</div>
+        <button class="btn btn-gold" onclick="showPayInstruction('/buy_pet_wolf', 'Lobo Cibernético (20 ⭐)')">Ver comando de pago • 20 ⭐</button>
       </div>
-
       <div class="item-card">
         <div class="item-head">
           <span class="item-title">🔒 Dragón Estelar</span>
           <span class="price-tag">35 ⭐</span>
         </div>
-        <div class="item-desc">Requiere pago confirmado de 35 Estrellas en el bot (`/buy_pet_dragon`).</div>
-        <button class="btn btn-gold" onclick="requestStarPayment('/buy_pet_dragon', 'Dragón Estelar (35 ⭐)')">Pagar 35 ⭐ para desbloquear</button>
+        <div class="item-desc">En el chat de tu bot escribe <b>/buy_pet_dragon</b> para recibir la factura de 35 ⭐.</div>
+        <button class="btn btn-gold" onclick="showPayInstruction('/buy_pet_dragon', 'Dragón Estelar (35 ⭐)')">Ver comando de pago • 35 ⭐</button>
       </div>
-
       <div class="item-card">
         <div class="item-head">
           <span class="item-title">🔒 Gato Real Dorado</span>
           <span class="price-tag">50 ⭐</span>
         </div>
-        <div class="item-desc">Requiere pago confirmado de 50 Estrellas en el bot (`/buy_pet_royalcat`).</div>
-        <button class="btn btn-gold" onclick="requestStarPayment('/buy_pet_royalcat', 'Gato Real Dorado (50 ⭐)')">Pagar 50 ⭐ para desbloquear</button>
+        <div class="item-desc">En el chat de tu bot escribe <b>/buy_pet_royalcat</b> para recibir la factura de 50 ⭐.</div>
+        <button class="btn btn-gold" onclick="showPayInstruction('/buy_pet_royalcat', 'Gato Real Dorado (50 ⭐)')">Ver comando de pago • 50 ⭐</button>
       </div>
     </div>
 
-    <!-- PANEL MEJORAS VIP CON TELEGRAM STARS -->
+    <!-- PANEL MEJORAS VIP -->
     <div id="panel-vip" class="panel">
       <div class="item-card">
         <div class="item-head">
           <span class="item-title">👑 Pase VIP 24h</span>
           <span class="price-tag">15 ⭐</span>
         </div>
-        <div class="item-desc"><b>Efecto:</b> Reduce bajadas a 1/3 y duplica (x2) la recuperación al cuidar durante 24h.</div>
-        <button class="btn btn-gold" onclick="requestStarPayment('/buy_vip', 'Pase VIP 24h (15 ⭐)')">Solicitar factura • 15 ⭐</button>
+        <div class="item-desc"><b>Efecto:</b> Reduce bajadas a 1/3 y duplica (x2) la recuperación por 24h. Comando: <b>/buy_vip</b></div>
+        <button class="btn btn-gold" onclick="showPayInstruction('/buy_vip', 'Pase VIP 24h (15 ⭐)')">Ver comando • 15 ⭐</button>
       </div>
       <div class="item-card">
         <div class="item-head">
           <span class="item-title">🍖 Banquete Real 100%</span>
           <span class="price-tag">10 ⭐</span>
         </div>
-        <div class="item-desc"><b>Efecto:</b> Sube Hambre, Sed, Felicidad y Salud al 100% y limpia suciedad.</div>
-        <button class="btn btn-gold" onclick="requestStarPayment('/buy_banquete', 'Banquete Real (10 ⭐)')">Solicitar factura • 10 ⭐</button>
+        <div class="item-desc"><b>Efecto:</b> Sube Hambre, Sed, Felicidad y Salud al 100% y limpia. Comando: <b>/buy_banquete</b></div>
+        <button class="btn btn-gold" onclick="showPayInstruction('/buy_banquete', 'Banquete Real (10 ⭐)')">Ver comando • 10 ⭐</button>
       </div>
       <div class="item-card">
         <div class="item-head">
           <span class="item-title">⚡ Súper Batería 100%</span>
           <span class="price-tag">10 ⭐</span>
         </div>
-        <div class="item-desc"><b>Efecto:</b> Restaura la Energía al 100%.</div>
-        <button class="btn btn-gold" onclick="requestStarPayment('/buy_energia', 'Súper Batería (10 ⭐)')">Solicitar factura • 10 ⭐</button>
+        <div class="item-desc"><b>Efecto:</b> Restaura la Energía al 100%. Comando: <b>/buy_energia</b></div>
+        <button class="btn btn-gold" onclick="showPayInstruction('/buy_energia', 'Súper Batería (10 ⭐)')">Ver comando • 10 ⭐</button>
       </div>
       <div class="item-card">
         <div class="item-head">
           <span class="item-title">🛡️ Escudo Anti-Caída 12h</span>
           <span class="price-tag">12 ⭐</span>
         </div>
-        <div class="item-desc"><b>Efecto:</b> Evita bajadas durante 12 horas.</div>
-        <button class="btn btn-gold" onclick="requestStarPayment('/buy_escudo', 'Escudo 12h (12 ⭐)')">Solicitar factura • 12 ⭐</button>
+        <div class="item-desc"><b>Efecto:</b> Evita bajadas durante 12 horas. Comando: <b>/buy_escudo</b></div>
+        <button class="btn btn-gold" onclick="showPayInstruction('/buy_escudo', 'Escudo 12h (12 ⭐)')">Ver comando • 12 ⭐</button>
       </div>
     </div>
   </div>
@@ -521,8 +589,16 @@
         state.salud = 0;
         state.vivo = false;
         state.enfermo = false;
-        addLog('💀 Tu mascota ha muerto por falta de cuidados. Pulsa Revivir para empezar con un bebé.');
+        addLog('💀 Tu mascota ha muerto por descuido.');
       }
+    }
+
+    function setPetMotion(motionClass) {
+      const growth = getGrowthInfo();
+      const wrap = document.getElementById('petWrap');
+      wrap.style.setProperty('--scale', growth.scale);
+      wrap.className = motionClass ? `pet-wrap ${motionClass}` : 'pet-wrap';
+      wrap.style.transform = `translateX(-50%) scale(${growth.scale})`;
     }
 
     function updateUI(customMsg) {
@@ -544,24 +620,22 @@
       document.getElementById('bSuciedad').style.width = state.suciedad + '%';
       document.getElementById('activePetName').textContent = state.petName;
 
-      const wrap = document.getElementById('petWrap');
-      wrap.style.transform = `translateX(-50%) scale(${growth.scale})`;
+      setPetMotion(state.sleeping ? 'sleep-anim' : '');
 
       document.getElementById('stage').classList.toggle('dead', !state.vivo);
       document.getElementById('poopPile').classList.toggle('show', state.vivo && state.suciedad >= 35);
       document.getElementById('healBtn').classList.toggle('show', state.vivo && state.enfermo);
       document.getElementById('reviveBtn').classList.toggle('show', !state.vivo);
-
       document.querySelectorAll('.care-btn').forEach(b => { b.disabled = !state.vivo; });
 
       const alertas = [];
-      if (!state.vivo) alertas.push('💀 Mascota fallecida — Usa Revivir');
+      if (!state.vivo) alertas.push('💀 Fallecida — Usa Revivir');
       else {
         if (state.enfermo) alertas.push('🤒 ¡Enferma! Usa Curar');
-        if (state.hambre < 25) alertas.push('🍖 ¡Tiene hambre!');
-        if (state.sed < 25) alertas.push('💧 ¡Tiene sed!');
-        if (state.suciedad >= 45) alertas.push('💩 ¡Hay caca / suciedad!');
-        if (state.energia < 20) alertas.push('😴 ¡Sin energía!');
+        if (state.hambre < 25) alertas.push('🍖 ¡Hambre baja!');
+        if (state.sed < 25) alertas.push('💧 ¡Sed baja!');
+        if (state.suciedad >= 45) alertas.push('💩 ¡Suciedad alta!');
+        if (state.energia < 20) alertas.push('😴 ¡Energía baja!');
       }
 
       const banner = document.getElementById('alertBanner');
@@ -582,6 +656,7 @@
       document.getElementById('fxPop').className = 'fx-pop';
       document.getElementById('stage').classList.remove('night');
       state.sleeping = false;
+      setPetMotion('');
     }
 
     function startEat() {
@@ -592,13 +667,15 @@
       const fx = document.getElementById('fxPop');
       dish.textContent = '🍖';
       dish.classList.add('show');
-      updateUI('🚶 Yendo a comer...');
+      setPetMotion('move-right');
+      updateUI('🚶 Caminando hacia la comida...');
 
       timers.push(setTimeout(() => {
+        setPetMotion('chew-anim');
         fx.textContent = '😋';
         fx.className = 'fx-pop active';
         updateUI('🍖 ¡Comiéndose la comida!');
-      }, 650));
+      }, 550));
 
       timers.push(setTimeout(() => {
         dish.textContent = '🦴';
@@ -606,14 +683,14 @@
         state.felicidad += 5;
         state.suciedad += 14;
         state.edadMinutos += 1;
-        updateUI('😊 ¡Comió bien!');
+        updateUI('😊 ¡Comida terminada!');
         addLog('Comió (+Hambre, +14% Suciedad)');
-      }, 1600));
+      }, 1650));
 
       timers.push(setTimeout(() => {
         resetProps();
         updateUI();
-      }, 2300));
+      }, 2350));
     }
 
     function startDrink() {
@@ -624,13 +701,15 @@
       const fx = document.getElementById('fxPop');
       dish.textContent = '🥣';
       dish.classList.add('show');
-      updateUI('🚶 Yendo al agua...');
+      setPetMotion('move-right');
+      updateUI('🚶 Caminando hacia el agua...');
 
       timers.push(setTimeout(() => {
+        setPetMotion('drink-anim');
         fx.textContent = '💧';
         fx.className = 'fx-pop active';
         updateUI('💧 ¡Bebiendo agua!');
-      }, 650));
+      }, 550));
 
       timers.push(setTimeout(() => {
         state.sed += state.enfermo ? 12 : 25;
@@ -638,12 +717,12 @@
         state.edadMinutos += 1;
         updateUI('💦 ¡Hidratado!');
         addLog('Bebió agua (+Sed)');
-      }, 1600));
+      }, 1650));
 
       timers.push(setTimeout(() => {
         resetProps();
         updateUI();
-      }, 2300));
+      }, 2350));
     }
 
     function startPlay() {
@@ -657,9 +736,10 @@
       const ball = document.getElementById('toyBall');
       const fx = document.getElementById('fxPop');
       ball.classList.add('show');
+      setPetMotion('play-anim');
       fx.textContent = '🎾';
       fx.className = 'fx-pop active';
-      updateUI('🎾 ¡Jugando!');
+      updateUI('🎾 ¡Saltando y jugando!');
 
       timers.push(setTimeout(() => {
         state.felicidad += 25;
@@ -670,7 +750,7 @@
         resetProps();
         updateUI('🎉 ¡Jugó!');
         addLog('Jugó (+25% Felicidad, -12% Energía)');
-      }, 1800));
+      }, 1850));
     }
 
     function cleanPoop() {
@@ -686,17 +766,18 @@
       clearTimers();
       resetProps();
       const fx = document.getElementById('fxPop');
+      setPetMotion('bath-anim');
       fx.textContent = '🫧';
       fx.className = 'fx-pop active';
-      updateUI('🛁 ¡Bañándose!');
+      updateUI('🛁 ¡Bañándose y sacudiéndose!');
 
       timers.push(setTimeout(() => {
         state.suciedad = 0;
         state.felicidad += 12;
         resetProps();
-        updateUI('✨ ¡Limpio!');
+        updateUI('✨ ¡Limpio y seco!');
         addLog('Bañaste a tu mascota');
-      }, 1600));
+      }, 1700));
     }
 
     function toggleSleep() {
@@ -708,6 +789,7 @@
         resetProps();
         state.sleeping = true;
         stage.classList.add('night');
+        setPetMotion('sleep-anim');
         fx.textContent = 'Zzz';
         fx.className = 'fx-pop active';
         state.energia += 22;
@@ -758,13 +840,12 @@
       addLog('Usando mascota gratuita: Zorro Solar');
     }
 
-    // No cambia la mascota sin pago: envía el comando de factura al bot de Telegram
-    function requestStarPayment(cmd, label) {
-      addLog(`Bloqueado sin pago: solicita ${label} con ${cmd} en el bot.`);
+    function showPayInstruction(cmd, label) {
+      addLog(`Para pagar ${label}, escribe ${cmd} en el chat de tu bot.`);
       if (tg) {
-        tg.openTelegramLink('https://t.me/tamagochibot?text=' + encodeURIComponent(cmd));
+        tg.showAlert(`Escribe ${cmd} en el chat con tu bot para recibir la factura de Estrellas (${label}).`);
       } else {
-        alert(`Bloqueado: envía ${cmd} en Telegram para pagar con Estrellas (${label}).`);
+        alert(`Escribe ${cmd} en el chat con tu bot para pagar ${label}.`);
       }
     }
 
