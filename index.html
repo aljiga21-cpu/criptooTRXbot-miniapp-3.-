@@ -3,155 +3,503 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>tamagochibot — Telegram Mini App</title>
+  <title>tamagochibot — Mascota Animada</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
-      --bg: #0f172a;
-      --card: #1e293b;
+      --bg: #0b1120;
+      --card: #162033;
+      --card-2: #0f172a;
       --text: #f8fafc;
       --muted: #94a3b8;
-      --accent: #38bdf8;
+      --food: #fb923c;
+      --water: #38bdf8;
+      --play: #4ade80;
+      --sleep: #a78bfa;
       --vip: #f59e0b;
     }
-    * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
+
+    * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; user-select: none; }
+
     body {
-      margin: 0; padding: 16px;
+      margin: 0;
+      padding: 14px;
       background: var(--tg-theme-bg-color, var(--bg));
       color: var(--tg-theme-text-color, var(--text));
     }
-    .box {
-      max-width: 440px; margin: 0 auto;
+
+    .app {
+      max-width: 440px;
+      margin: 0 auto;
       background: var(--tg-theme-secondary-bg-color, var(--card));
-      border-radius: 18px; padding: 18px;
+      border-radius: 22px;
+      padding: 16px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
     }
-    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
-    .tag {
-      font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px;
-      background: rgba(245, 158, 11, 0.18); color: var(--vip); border: 1px solid var(--vip);
+
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
     }
+
+    .title-wrap { display: flex; align-items: center; gap: 8px; }
+    .pet-name { font-size: 18px; font-weight: 800; }
+
+    .vip-pill {
+      background: rgba(245, 158, 11, 0.16);
+      color: var(--vip);
+      border: 1px solid rgba(245, 158, 11, 0.5);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    /* Escenario de la mascota */
     .stage {
-      background: #0b1120; border: 2px solid #334155; border-radius: 16px;
-      padding: 22px 12px; text-align: center; margin-bottom: 16px;
+      position: relative;
+      height: 235px;
+      border-radius: 18px;
+      overflow: hidden;
+      background: linear-gradient(180deg, #1d3557 0%, #2b4c7e 58%, #3a5a40 58%, #283618 100%);
+      border: 2px solid #2a3a54;
+      margin-bottom: 14px;
+      transition: filter 0.4s ease;
     }
-    .pet {
-      font-size: 40px; font-weight: 800; display: inline-block;
-      animation: bounce 2s ease-in-out infinite;
+
+    .stage.sleeping {
+      filter: brightness(0.62) saturate(0.8);
     }
-    @keyframes bounce {
+
+    .floor-shadow {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      width: 120px;
+      height: 22px;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.35);
+      border-radius: 50%;
+      animation: shadowPulse 2.4s ease-in-out infinite;
+    }
+
+    @keyframes shadowPulse {
+      0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.35; }
+      50% { transform: translateX(-50%) scale(0.86); opacity: 0.22; }
+    }
+
+    .pet-container {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      width: 150px;
+      height: 150px;
+      transform: translateX(-50%);
+      transform-origin: bottom center;
+      animation: breathe 2.4s ease-in-out infinite;
+    }
+
+    @keyframes breathe {
+      0%, 100% { transform: translateX(-50%) scaleY(1) scaleX(1); }
+      50% { transform: translateX(-50%) scaleY(1.03) scaleX(0.98); }
+    }
+
+    /* Animaciones de acciones */
+    .pet-container.anim-eat {
+      animation: chomp 0.45s ease-in-out 5;
+    }
+    @keyframes chomp {
+      0%, 100% { transform: translateX(-50%) translateY(0) rotate(0deg); }
+      50% { transform: translateX(-50%) translateY(6px) rotate(-4deg); }
+    }
+
+    .pet-container.anim-drink {
+      animation: sip 0.5s ease-in-out 4;
+    }
+    @keyframes sip {
+      0%, 100% { transform: translateX(-50%) translateY(0) rotate(0deg); }
+      50% { transform: translateX(-50%) translateY(8px) rotate(6deg); }
+    }
+
+    .pet-container.anim-play {
+      animation: hop 0.55s ease-in-out 4;
+    }
+    @keyframes hop {
+      0%, 100% { transform: translateX(-50%) translateY(0) scale(1); }
+      45% { transform: translateX(-50%) translateY(-28px) scale(1.04, 0.96); }
+      85% { transform: translateX(-50%) translateY(3px) scale(0.96, 1.04); }
+    }
+
+    .pet-container.anim-sleep {
+      animation: doze 3s ease-in-out infinite;
+    }
+    @keyframes doze {
+      0%, 100% { transform: translateX(-50%) translateY(2px) rotate(0deg); }
+      50% { transform: translateX(-50%) translateY(5px) rotate(3deg); }
+    }
+
+    /* Parpadeo automático de ojos */
+    .eye-lid {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: blink 4.2s infinite;
+    }
+    .sleeping .eye-lid {
+      transform: scaleY(1);
+      animation: none;
+    }
+    @keyframes blink {
+      0%, 94%, 100% { transform: scaleY(0); }
+      97% { transform: scaleY(1); }
+    }
+
+    /* Cola en movimiento */
+    .tail {
+      transform-box: fill-box;
+      transform-origin: left bottom;
+      animation: wag 1.4s ease-in-out infinite;
+    }
+    @keyframes wag {
+      0%, 100% { transform: rotate(-10deg); }
+      50% { transform: rotate(14deg); }
+    }
+
+    /* Objetos de escena (comida, agua, pelota, zzz) */
+    .prop {
+      position: absolute;
+      bottom: 24px;
+      right: 34px;
+      font-size: 32px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s;
+    }
+    .prop.active { opacity: 1; }
+
+    .ball {
+      position: absolute;
+      bottom: 28px;
+      right: 36px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #fde047, #ef4444);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.35);
+      opacity: 0;
+    }
+    .ball.active {
+      opacity: 1;
+      animation: ballBounce 0.55s ease-in-out 4;
+    }
+    @keyframes ballBounce {
       0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-6px); }
+      50% { transform: translateY(-48px); }
     }
-    .sub { color: var(--muted); font-size: 13px; margin-top: 8px; }
-    .bar-wrap { margin-bottom: 11px; }
-    .bar-top { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; }
-    .bar-bg { height: 9px; background: #334155; border-radius: 999px; overflow: hidden; }
-    .bar-fill { height: 100%; background: var(--accent); transition: width 0.25s; }
-    .actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 14px; }
-    button {
-      border: 0; border-radius: 12px; padding: 11px 8px; font-weight: 700;
-      font-size: 13px; cursor: pointer; background: #334155; color: #fff;
+
+    .zzz {
+      position: absolute;
+      top: 22px;
+      right: 44px;
+      font-weight: 800;
+      color: #e2e8f0;
+      font-size: 18px;
+      opacity: 0;
     }
-    .vip-card {
-      margin-top: 16px; padding-top: 14px; border-top: 1px solid #334155;
+    .zzz.active {
+      animation: floatZ 2.2s linear infinite;
     }
-    .vip-btn {
-      width: 100%; margin-top: 8px;
-      background: linear-gradient(90deg, #d97706, #f59e0b); color: #0f172a;
+    @keyframes floatZ {
+      0% { opacity: 0; transform: translate(0, 10px) scale(0.8); }
+      30% { opacity: 1; }
+      100% { opacity: 0; transform: translate(14px, -28px) scale(1.2); }
+    }
+
+    .status-banner {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(15, 23, 42, 0.72);
+      backdrop-filter: blur(4px);
+      padding: 5px 10px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* Barras de estado */
+    .stat-row { margin-bottom: 10px; }
+    .stat-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+    .track {
+      height: 9px;
+      background: var(--card-2);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.3s ease;
+    }
+
+    /* Botones de cuidado */
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 12px;
+      padding: 11px 10px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #0b1120;
+      cursor: pointer;
+      transition: transform 0.1s ease, filter 0.15s ease;
+    }
+    .btn:active { transform: scale(0.97); }
+
+    .b-food { background: var(--food); }
+    .b-water { background: var(--water); }
+    .b-play { background: var(--play); }
+    .b-sleep { background: var(--sleep); color: #fff; }
+
+    .vip-box {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid #273752;
+    }
+    .vip-title { font-size: 13px; font-weight: 700; margin-bottom: 8px; color: var(--vip); }
+
+    .b-vip {
+      width: 100%;
+      margin-bottom: 7px;
+      background: linear-gradient(90deg, #d97706, #f59e0b);
+      color: #0b1120;
     }
   </style>
 </head>
 <body>
-  <div class="box">
-    <div class="header">
-      <strong>🐾 tamagochibot</strong>
-      <span id="vipStatus" class="tag">VIP 24h • 15 ⭐</span>
+  <div class="app">
+    <div class="top">
+      <div class="title-wrap">
+        <span class="pet-name">tamagochibot</span>
+      </div>
+      <span id="vipTag" class="vip-pill">⭐ VIP 24h • 15 ⭐</span>
     </div>
 
-    <div class="stage">
-      <div id="petFace" class="pet">★( ^o^ )★</div>
-      <div id="petMsg" class="sub">Listo para jugar y ganar Estrellas</div>
+    <div id="stage" class="stage">
+      <div id="statusBanner" class="status-banner">😊 Feliz y activo</div>
+      <div id="zzz" class="zzz">Zzz</div>
+      <div id="ball" class="ball"></div>
+      <div id="prop" class="prop">🍖</div>
+      <div class="floor-shadow"></div>
+
+      <div id="petBox" class="pet-container">
+        <svg viewBox="0 0 160 160" width="150" height="150">
+          <!-- Cola -->
+          <path class="tail" d="M 112 118 Q 145 96 138 72 Q 133 62 124 70 Q 128 88 106 108 Z" fill="#d97706"/>
+
+          <!-- Patas traseras -->
+          <ellipse cx="60" cy="134" rx="14" ry="9" fill="#b45309"/>
+          <ellipse cx="100" cy="134" rx="14" ry="9" fill="#b45309"/>
+
+          <!-- Cuerpo -->
+          <ellipse cx="80" cy="108" rx="34" ry="28" fill="#f59e0b"/>
+          <ellipse cx="80" cy="112" rx="22" ry="18" fill="#fef3c7"/>
+
+          <!-- Patas delanteras -->
+          <rect x="54" y="114" width="12" height="20" rx="6" fill="#d97706"/>
+          <rect x="94" y="114" width="12" height="20" rx="6" fill="#d97706"/>
+
+          <!-- Orejas -->
+          <polygon points="48,58 38,24 64,46" fill="#d97706"/>
+          <polygon points="50,53 44,32 60,46" fill="#fde68a"/>
+          <polygon points="112,58 122,24 96,46" fill="#d97706"/>
+          <polygon points="110,53 116,32 100,46" fill="#fde68a"/>
+
+          <!-- Cabeza -->
+          <circle cx="80" cy="68" r="32" fill="#fbbf24"/>
+
+          <!-- Mejillas -->
+          <circle cx="58" cy="76" r="6" fill="#fb7185" opacity="0.45"/>
+          <circle cx="102" cy="76" r="6" fill="#fb7185" opacity="0.45"/>
+
+          <!-- Ojos -->
+          <circle cx="67" cy="65" r="5.5" fill="#0f172a"/>
+          <circle cx="65.5" cy="63" r="2" fill="#ffffff"/>
+          <circle cx="93" cy="65" r="5.5" fill="#0f172a"/>
+          <circle cx="91.5" cy="63" r="2" fill="#ffffff"/>
+
+          <!-- Párpados para parpadear / dormir -->
+          <rect class="eye-lid" x="61" y="59" width="12" height="12" rx="5" fill="#fbbf24"/>
+          <rect class="eye-lid" x="87" y="59" width="12" height="12" rx="5" fill="#fbbf24"/>
+
+          <!-- Nariz y boca -->
+          <ellipse cx="80" cy="73" rx="4.5" ry="3" fill="#7c2d12"/>
+          <path id="mouth" d="M 72 79 Q 80 86 88 79" stroke="#7c2d12" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+
+          <!-- Corona VIP -->
+          <g id="crown" opacity="0.25">
+            <polygon points="62,36 68,20 80,32 92,20 98,36" fill="#fde047" stroke="#eab308" stroke-width="1.5"/>
+          </g>
+        </svg>
+      </div>
     </div>
 
-    <div class="bar-wrap">
-      <div class="bar-top"><span>🍖 Hambre</span><span id="hambreTxt">70%</span></div>
-      <div class="bar-bg"><div id="hambreBar" class="bar-fill" style="width:70%"></div></div>
+    <div class="stat-row">
+      <div class="stat-label"><span>🍖 Hambre</span><span id="hTxt">70%</span></div>
+      <div class="track"><div id="hBar" class="fill" style="width:70%; background:var(--food);"></div></div>
     </div>
 
-    <div class="bar-wrap">
-      <div class="bar-top"><span>🎾 Felicidad</span><span id="felicidadTxt">75%</span></div>
-      <div class="bar-bg"><div id="felicidadBar" class="bar-fill" style="width:75%"></div></div>
+    <div class="stat-row">
+      <div class="stat-label"><span>💧 Sed / Hidratación</span><span id="wTxt">75%</span></div>
+      <div class="track"><div id="wBar" class="fill" style="width:75%; background:var(--water);"></div></div>
     </div>
 
-    <div class="bar-wrap">
-      <div class="bar-top"><span>⚡ Energía</span><span id="energiaTxt">80%</span></div>
-      <div class="bar-bg"><div id="energiaBar" class="bar-fill" style="width:80%"></div></div>
+    <div class="stat-row">
+      <div class="stat-label"><span>🎾 Felicidad</span><span id="fTxt">75%</span></div>
+      <div class="track"><div id="fBar" class="fill" style="width:75%; background:var(--play);"></div></div>
     </div>
 
-    <div class="actions">
-      <button onclick="cuidar('alimentar', 20, 5, 0, '🍖 ¡Alimentado!')">🍖 Comer</button>
-      <button onclick="cuidar('jugar', -5, 25, -10, '🎾 ¡Jugando!')">🎾 Jugar</button>
-      <button onclick="cuidar('dormir', 0, 0, 30, '💤 ¡Durmiendo!')">💤 Dormir</button>
+    <div class="stat-row">
+      <div class="stat-label"><span>⚡ Energía</span><span id="eTxt">80%</span></div>
+      <div class="track"><div id="eBar" class="fill" style="width:80%; background:var(--sleep);"></div></div>
     </div>
 
-    <div class="vip-card">
-      <strong>⭐ Mejoras VIP con Telegram Stars</strong>
-      <button class="vip-btn" onclick="pedirFactura('/buy_vip')">👑 Pase VIP 24h (15 ⭐)</button>
-      <button class="vip-btn" onclick="pedirFactura('/buy_banquete')">🍖 Banquete Real 100% (10 ⭐)</button>
-      <button class="vip-btn" onclick="pedirFactura('/buy_energia')">⚡ Súper Batería 100% (10 ⭐)</button>
+    <div class="grid-4">
+      <button class="btn b-food" onclick="doAction('eat')">🍖 Comer</button>
+      <button class="btn b-water" onclick="doAction('drink')">💧 Beber Agua</button>
+      <button class="btn b-play" onclick="doAction('play')">🎾 Jugar</button>
+      <button class="btn b-sleep" onclick="doAction('sleep')">💤 Dormir</button>
+    </div>
+
+    <div class="vip-box">
+      <div class="vip-title">⭐ Mejoras VIP con Telegram Stars</div>
+      <button class="btn b-vip" onclick="buyVip('/buy_vip')">👑 Pase VIP 24h (15 ⭐)</button>
+      <button class="btn b-vip" onclick="buyVip('/buy_banquete')">🍖 Banquete Real 100% (10 ⭐)</button>
+      <button class="btn b-vip" onclick="buyVip('/buy_energia')">⚡ Súper Batería 100% (10 ⭐)</button>
     </div>
   </div>
 
   <script>
-    const tg = window.Telegram.WebApp;
-    tg.ready();
-    tg.expand();
-
-    let state = { hambre: 70, felicidad: 75, energia: 80 };
-
-    function clamp(v) { return Math.max(0, Math.min(100, v)); }
-
-    function render(msg) {
-      state.hambre = clamp(state.hambre);
-      state.felicidad = clamp(state.felicidad);
-      state.energia = clamp(state.energia);
-
-      document.getElementById('hambreTxt').textContent = state.hambre + '%';
-      document.getElementById('hambreBar').style.width = state.hambre + '%';
-      document.getElementById('felicidadTxt').textContent = state.felicidad + '%';
-      document.getElementById('felicidadBar').style.width = state.felicidad + '%';
-      document.getElementById('energiaTxt').textContent = state.energia + '%';
-      document.getElementById('energiaBar').style.width = state.energia + '%';
-
-      const face = document.getElementById('petFace');
-      if (state.hambre < 25 || state.energia < 20) face.textContent = '(×_×)';
-      else if (state.felicidad < 35) face.textContent = '(•︵•)';
-      else face.textContent = '★( ^o^ )★';
-
-      if (msg) document.getElementById('petMsg').textContent = msg;
+    const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+    if (tg) {
+      tg.ready();
+      tg.expand();
     }
 
-    function cuidar(accion, dh, df, de, msg) {
-      state.hambre += dh;
-      state.felicidad += df;
-      state.energia += de;
-      render(msg);
+    let stats = { hambre: 70, sed: 75, felicidad: 75, energia: 80 };
+    let animTimer = null;
 
-      // Si se abrió desde un teclado con web_app, envía la acción al bot
-      try {
-        tg.sendData(JSON.stringify({ action: accion }));
-      } catch (e) {}
+    function clamp(n) { return Math.max(0, Math.min(100, n)); }
+
+    function renderBars(bannerText) {
+      stats.hambre = clamp(stats.hambre);
+      stats.sed = clamp(stats.sed);
+      stats.felicidad = clamp(stats.felicidad);
+      stats.energia = clamp(stats.energia);
+
+      document.getElementById('hTxt').textContent = stats.hambre + '%';
+      document.getElementById('hBar').style.width = stats.hambre + '%';
+
+      document.getElementById('wTxt').textContent = stats.sed + '%';
+      document.getElementById('wBar').style.width = stats.sed + '%';
+
+      document.getElementById('fTxt').textContent = stats.felicidad + '%';
+      document.getElementById('fBar').style.width = stats.felicidad + '%';
+
+      document.getElementById('eTxt').textContent = stats.energia + '%';
+      document.getElementById('eBar').style.width = stats.energia + '%';
+
+      if (bannerText) {
+        document.getElementById('statusBanner').textContent = bannerText;
+      }
     }
 
-    function pedirFactura(comandoCompra) {
-      // Abre el bot con el comando de compra o cierra el Mini App enviando el comando
-      try {
-        tg.sendData(JSON.stringify({ command: comandoCompra }));
-      } catch (e) {}
-      tg.openTelegramLink('https://t.me/tamagochibot?text=' + encodeURIComponent(comandoCompra));
+    function clearAnimations() {
+      const petBox = document.getElementById('petBox');
+      const stage = document.getElementById('stage');
+      const prop = document.getElementById('prop');
+      const ball = document.getElementById('ball');
+      const zzz = document.getElementById('zzz');
+
+      petBox.classList.remove('anim-eat', 'anim-drink', 'anim-play', 'anim-sleep');
+      stage.classList.remove('sleeping');
+      prop.classList.remove('active');
+      ball.classList.remove('active');
+      zzz.classList.remove('active');
+      if (animTimer) clearTimeout(animTimer);
     }
 
-    render();
+    function doAction(type) {
+      clearAnimations();
+      const petBox = document.getElementById('petBox');
+      const stage = document.getElementById('stage');
+      const prop = document.getElementById('prop');
+      const ball = document.getElementById('ball');
+      const zzz = document.getElementById('zzz');
+
+      if (type === 'eat') {
+        stats.hambre += 22;
+        stats.felicidad += 5;
+        prop.textContent = '🍖';
+        prop.classList.add('active');
+        petBox.classList.add('anim-eat');
+        renderBars('🍖 ¡Ñam! Comiendo delicioso');
+        animTimer = setTimeout(clearAnimations, 2300);
+      } else if (type === 'drink') {
+        stats.sed += 25;
+        stats.felicidad += 4;
+        prop.textContent = '💧';
+        prop.classList.add('active');
+        petBox.classList.add('anim-drink');
+        renderBars('💧 ¡Glup! Bebiendo agua fresca');
+        animTimer = setTimeout(clearAnimations, 2100);
+      } else if (type === 'play') {
+        if (stats.energia < 10) {
+          renderBars('😴 Demasiado cansado para jugar');
+          return;
+        }
+        stats.felicidad += 25;
+        stats.energia -= 12;
+        stats.sed -= 8;
+        ball.classList.add('active');
+        petBox.classList.add('anim-play');
+        renderBars('🎾 ¡Saltando con la pelota!');
+        animTimer = setTimeout(clearAnimations, 2200);
+      } else if (type === 'sleep') {
+        stats.energia += 30;
+        stats.hambre -= 6;
+        stats.sed -= 6;
+        stage.classList.add('sleeping');
+        zzz.classList.add('active');
+        petBox.classList.add('anim-sleep');
+        renderBars('💤 Durmiendo profundamente...');
+      }
+    }
+
+    function buyVip(cmd) {
+      if (tg) {
+        try {
+          tg.sendData(JSON.stringify({ command: cmd }));
+        } catch (e) {}
+        tg.openTelegramLink('https://t.me/tamagochibot?text=' + encodeURIComponent(cmd));
+      } else {
+        alert('Abre esto dentro de Telegram para pagar con Estrellas: ' + cmd);
+      }
+    }
+
+    renderBars();
   </script>
 </body>
 </html>
